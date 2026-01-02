@@ -1,3 +1,8 @@
+"""
+Example command to update data:
+    python fetch_data.py
+"""
+
 import pandas as pd
 import os
 import json

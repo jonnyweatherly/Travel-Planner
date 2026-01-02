@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Details - Travel & Sport Planner</title>
+    <link rel="stylesheet" href="style.css?v=5">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2><a href="index.html" style="text-decoration: none; color: inherit;">Travel<span class="highlight">X</span></a></h2>
+            </div>
+
+            <ul class="nav-links">
+                <li data-view="locations" onclick="window.location.href='index.html'">
+                    <span class="icon">🌍</span> Explore
+                </li>
+                <li data-view="timeline" onclick="window.location.href='index.html#timeline'">
+                    <span class="icon">📅</span> Timeline
+                </li>
+                <li data-view="config" onclick="window.location.href='index.html#config'">
+                    <span class="icon">⚙️</span> Settings
+                </li>
+            </ul>
+
+            <div class="back-button-container">
+                <button class="back-btn" onclick="window.history.back()">
+                    ← Back to Explore
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="content-area">
+            <header>
+                <div class="header-text">
+                    <h1 id="location-name">Loading...</h1>
+                    <p id="location-country"></p>
+                </div>
+            </header>
+
+            <div class="location-detail-container">
+                <div class="loading-spinner">Loading location details...</div>
+            </div>
+        </main>
+    </div>
+
+    <script src="location.js?v=2"></script>
+</body>
+</html>

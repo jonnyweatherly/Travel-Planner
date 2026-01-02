@@ -7,3 +7,5 @@ venv/
 !sample_*.csv
 !demo_*.csv
 !index.html
+!trip.html
+!location.html

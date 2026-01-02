@@ -79,6 +79,29 @@ body {
     margin-top: 2rem;
     padding-top: 2rem;
     border-top: 1px solid var(--border-color);
+    overflow-y: auto;
+    max-height: calc(100vh - 300px); /* Leave space for logo and nav */
+    padding-right: 0.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-color) var(--sidebar-bg);
+}
+
+/* Webkit scrollbar styling for filters panel */
+.filters-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+.filters-panel::-webkit-scrollbar-track {
+    background: var(--sidebar-bg);
+}
+
+.filters-panel::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 3px;
+}
+
+.filters-panel::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-glow);
 }
 
 .filters-panel h3 {
@@ -100,7 +123,7 @@ body {
     margin-bottom: 0.3rem;
 }
 
-select {
+select, input[type="number"] {
     width: 100%;
     padding: 0.5rem;
     background-color: var(--bg-color);
@@ -108,6 +131,45 @@ select {
     color: var(--text-primary);
     border-radius: 6px;
     outline: none;
+    font-family: var(--font-main);
+}
+
+select[multiple] {
+    padding: 0.3rem;
+}
+
+select[multiple] option {
+    padding: 0.4rem;
+    margin: 0.1rem 0;
+    border-radius: 4px;
+}
+
+select[multiple] option:checked {
+    background: var(--accent-color);
+    color: var(--bg-color);
+}
+
+.filter-hint {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-top: 0.3rem;
+    font-style: italic;
+}
+
+input[type="number"]:focus,
+select:focus {
+    border-color: var(--accent-color);
+}
+
+/* Remove number input spinners */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
 }
 
 .filter-toggle {
@@ -172,15 +234,53 @@ header {
 .view-section {
     display: none;
     flex: 1;
-    overflow-y: auto;
     z-index: 1;
-    /* Hide scrollbar but keep functionality */
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.view-section.active {
+    display: flex;
+}
+
+/* Fixed controls that stay visible while scrolling */
+.fixed-controls {
+    flex-shrink: 0;
+}
+
+/* Controls row - contains month picker and sort on same line */
+.controls-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Scrollable content area */
+.scrollable-content {
+    flex: 1;
+    overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--border-color) transparent;
 }
 
-.view-section.active {
-    display: block;
+.sort-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.sort-controls label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.sort-controls select {
+    min-width: 200px;
 }
 
 /* Grid Layout */
@@ -227,6 +327,29 @@ header {
     color: var(--text-secondary);
 }
 
+.card-cost {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--success-color);
+    white-space: nowrap;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.card-info {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.card-info.visits {
+    color: var(--accent-color);
+    font-weight: 500;
+}
+
 .tag {
     font-size: 0.75rem;
     padding: 0.2rem 0.6rem;
@@ -255,6 +378,47 @@ header {
     flex-wrap: wrap;
 }
 
+/* Season Controls */
+.season-controls {
+    margin-bottom: 2rem;
+}
+
+.month-controls {
+    flex: 1;
+}
+
+.month-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.month-btn {
+    padding: 0.6rem 1.2rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: var(--font-main);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.month-btn:hover {
+    background: rgba(56, 189, 248, 0.1);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.month-btn.active {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: var(--bg-color);
+}
+
 /* Timeline specific */
 .timeline-item {
     background: var(--card-bg);
@@ -264,16 +428,46 @@ header {
     border-radius: 0 8px 8px 0;
 }
 
-.timeline-date {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    margin-bottom: 0.2rem;
+.timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
 }
 
-.timeline-cost {
-    float: right;
-    font-weight: bold;
-    color: var(--success-color);
+.timeline-location {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.timeline-duration {
+    font-size: 0.9rem;
+    color: var(--accent-color);
+    font-weight: 500;
+}
+
+.timeline-date {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+}
+
+.timeline-costs {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.timeline-costs div {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.timeline-costs strong {
+    color: var(--text-primary);
 }
 
 /* Loading */
@@ -370,4 +564,293 @@ header {
 .tag.status-tag {
     font-weight: 600;
     text-transform: uppercase;
+}
+
+/* Location Detail Page Styles */
+.location-detail-container {
+    padding: 1rem 0;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.detail-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.detail-section.full-width {
+    grid-column: 1 / -1;
+}
+
+.detail-section h2 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    color: var(--accent-color);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+.detail-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.detail-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.detail-info-item {
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.detail-info-item strong {
+    color: var(--text-secondary);
+    display: block;
+    margin-bottom: 0.3rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.cost-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.cost-item {
+    padding: 1rem;
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.cost-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.cost-value {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--success-color);
+}
+
+.season-calendar {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 0.75rem;
+}
+
+.season-month {
+    padding: 1rem 0.5rem;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.season-month:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.season-month-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.season-month-quality {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: capitalize;
+}
+
+/* Season month color variations */
+.season-month.status-summer {
+    background: rgba(245, 158, 11, 0.15);
+    border-color: #f59e0b;
+}
+
+.season-month.status-summer .season-month-quality {
+    color: #f59e0b;
+}
+
+.season-month.status-spring {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: #10b981;
+}
+
+.season-month.status-spring .season-month-quality {
+    color: #10b981;
+}
+
+.season-month.status-autumn {
+    background: rgba(234, 88, 12, 0.15);
+    border-color: #ea580c;
+}
+
+.season-month.status-autumn .season-month-quality {
+    color: #ea580c;
+}
+
+.season-month.status-winter {
+    background: rgba(59, 130, 246, 0.15);
+    border-color: #3b82f6;
+}
+
+.season-month.status-winter .season-month-quality {
+    color: #60a5fa;
+}
+
+.season-month.status-danger {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: #ef4444;
+}
+
+.season-month.status-danger .season-month-quality {
+    color: #ef4444;
+}
+
+.season-month.status-good {
+    background: rgba(34, 197, 94, 0.15);
+    border-color: #22c55e;
+}
+
+.season-month.status-good .season-month-quality {
+    color: #22c55e;
+}
+
+.season-month.status-closed {
+    background: rgba(148, 163, 184, 0.1);
+    border-color: #475569;
+    opacity: 0.6;
+}
+
+.season-month.status-closed .season-month-quality {
+    color: #94a3b8;
+}
+
+.season-month.status-info {
+    background: rgba(168, 85, 247, 0.15);
+    border-color: #c084fc;
+}
+
+.season-month.status-info .season-month-quality {
+    color: #c084fc;
+}
+
+.visit-history {
+    margin-top: 1rem;
+}
+
+.visit-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.visit-item {
+    padding: 0.5rem 1rem;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: var(--accent-color);
+}
+
+.back-button-container {
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.back-btn {
+    width: 100%;
+    padding: 0.8rem 1.2rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: var(--font-main);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.back-btn:hover {
+    background: rgba(56, 189, 248, 0.1);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+/* Trip Detail Page Styles */
+.weeks-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.75rem;
+}
+
+.week-item {
+    padding: 0.75rem 1rem;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: var(--accent-color);
+    text-align: center;
+}
+
+.season-info {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.location-link-btn {
+    padding: 0.8rem 1.5rem;
+    background: var(--accent-color);
+    border: none;
+    border-radius: 8px;
+    color: var(--bg-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: var(--font-main);
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.location-link-btn:hover {
+    background: var(--text-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.4);
+}
+
+/* Make timeline items clickable */
+.timeline-item {
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.timeline-item:hover {
+    transform: translateX(5px);
+    border-left-color: var(--text-primary);
 }
