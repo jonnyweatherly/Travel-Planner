@@ -1,0 +1,7 @@
+venv/
+.env
+*.log
+*.csv
+*.html
+!sample_*.csv
+!demo_*.csv
