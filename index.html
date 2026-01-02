@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel & Sport Planner</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>Travel<span class="highlight">X</span></h2>
+            </div>
+            
+            <ul class="nav-links">
+                <li class="active" data-view="locations" onclick="switchView('locations')">
+                    <span class="icon">🌍</span> Explore
+                </li>
+                <li data-view="seasons" onclick="switchView('seasons')">
+                    <span class="icon">☀️</span> Season Planner
+                </li>
+                <li data-view="timeline" onclick="switchView('timeline')">
+                    <span class="icon">📅</span> Timeline
+                </li>
+            </ul>
+
+            <div class="filters-panel" id="filters-locations">
+                <h3>Filters</h3>
+                <div class="filter-group">
+                    <label>Sport</label>
+                    <select id="sport-filter" onchange="renderLocations()">
+                        <option value="all">All Sports</option>
+                        <!-- Populated by JS -->
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Region</label>
+                    <select id="region-filter" onchange="renderLocations()">
+                        <option value="all">Anywhere</option>
+                        <!-- Populated by JS -->
+                    </select>
+                </div>
+                <div class="filter-toggle">
+                    <input type="checkbox" id="cheap-toggle" onchange="renderLocations()">
+                    <label for="cheap-toggle">Budget Friendly Only</label>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="content-area">
+            <header>
+                <div class="header-text">
+                    <h1 id="page-title">Explore Destinations</h1>
+                    <p id="page-subtitle">Find your next adventure.</p>
+                </div>
+                <!-- Search bar could go here -->
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Search cities, countries..." onkeyup="renderLocations()">
+                </div>
+            </header>
+
+            <!-- Views -->
+            <div id="view-locations" class="view-section active">
+                <div class="stats-bar">
+                    <span id="loc-count">0 Destinations</span>
+                </div>
+                <div id="locations-grid" class="grid-container">
+                    <!-- Cards injected here -->
+                    <div class="loading-spinner">Loading Data...</div>
+                </div>
+            </div>
+
+            <div id="view-seasons" class="view-section">
+                <div class="season-controls">
+                    <label>Select Month:</label>
+                    <select id="month-selector" onchange="renderSeasons()">
+                        <option value="Jan">January</option>
+                        <option value="Feb">February</option>
+                        <option value="Mar">March</option>
+                        <option value="Apr">April</option>
+                        <option value="May">May</option>
+                        <option value="Jun">June</option>
+                        <option value="Jul">July</option>
+                        <option value="Aug">August</option>
+                        <option value="Sep">September</option>
+                        <option value="Oct">October</option>
+                        <option value="Nov">November</option>
+                        <option value="Dec">December</option>
+                    </select>
+                </div>
+                <div id="seasons-grid" class="grid-container">
+                    <!-- Season cards injected here -->
+                </div>
+            </div>
+
+            <div id="view-timeline" class="view-section">
+                <div id="timeline-list" class="timeline-container">
+                    <!-- Timeline items injected here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

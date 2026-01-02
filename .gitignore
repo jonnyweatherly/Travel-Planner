@@ -3,5 +3,7 @@ venv/
 *.log
 *.csv
 *.html
+
 !sample_*.csv
 !demo_*.csv
+!index.html
