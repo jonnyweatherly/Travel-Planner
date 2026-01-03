@@ -1,1022 +1,1022 @@
 [
   {
-    "Location":"Events",
-    "Month":"Jan",
-    "Quality":""
+    "Location": "Events",
+    "Month": "Jan",
+    "Quality": ""
   },
   {
-    "Location":"313",
-    "Month":"Jan",
-    "Quality":"Wakeboarding"
+    "Location": "313",
+    "Month": "Jan",
+    "Quality": "Wakeboarding"
   },
   {
-    "Location":"Hipnotics",
-    "Month":"Jan",
-    "Quality":"Wakeboarding"
+    "Location": "Hipnotics",
+    "Month": "Jan",
+    "Quality": "Wakeboarding"
   },
   {
-    "Location":"Germany",
-    "Month":"Jan",
-    "Quality":"Wakeboarding"
+    "Location": "Germany",
+    "Month": "Jan",
+    "Quality": "Wakeboarding"
   },
   {
-    "Location":"France",
-    "Month":"Jan",
-    "Quality":""
+    "Location": "France",
+    "Month": "Jan",
+    "Quality": "Winter"
   },
   {
-    "Location":"Romania",
-    "Month":"Jan",
-    "Quality":""
+    "Location": "Romania",
+    "Month": "Jan",
+    "Quality": "Winter"
   },
   {
-    "Location":"Hungary",
-    "Month":"Jan",
-    "Quality":""
+    "Location": "Hungary",
+    "Month": "Jan",
+    "Quality": "Winter"
   },
   {
-    "Location":"Japan",
-    "Month":"Jan",
-    "Quality":""
+    "Location": "Japan",
+    "Month": "Jan",
+    "Quality": "Winter"
   },
   {
-    "Location":"NZ",
-    "Month":"Jan",
-    "Quality":"Wakeboarding"
+    "Location": "NZ",
+    "Month": "Jan",
+    "Quality": "Wakeboarding"
   },
   {
-    "Location":"California",
-    "Month":"Jan",
-    "Quality":""
+    "Location": "California",
+    "Month": "Jan",
+    "Quality": "Mild Winter"
   },
   {
-    "Location":"Thailand",
-    "Month":"Jan",
-    "Quality":"Wakeboarding"
+    "Location": "Thailand",
+    "Month": "Jan",
+    "Quality": "Wakeboarding"
   },
   {
-    "Location":"Vietnam",
-    "Month":"Jan",
-    "Quality":""
+    "Location": "Vietnam",
+    "Month": "Jan",
+    "Quality": "Winter"
   },
   {
-    "Location":"Mexico",
-    "Month":"Jan",
-    "Quality":""
+    "Location": "Mexico",
+    "Month": "Jan",
+    "Quality": "Winter"
   },
   {
-    "Location":"Baltics",
-    "Month":"Jan",
-    "Quality":""
+    "Location": "Baltics",
+    "Month": "Jan",
+    "Quality": "Winter"
   },
   {
-    "Location":"Italy",
-    "Month":"Jan",
-    "Quality":""
+    "Location": "Italy",
+    "Month": "Jan",
+    "Quality": "Winter"
   },
   {
-    "Location":"Greece",
-    "Month":"Jan",
-    "Quality":""
+    "Location": "Greece",
+    "Month": "Jan",
+    "Quality": "Winter"
   },
   {
-    "Location":"Australia",
-    "Month":"Jan",
-    "Quality":"Volleyball"
+    "Location": "Australia",
+    "Month": "Jan",
+    "Quality": "Volleyball"
   },
   {
-    "Location":"Events",
-    "Month":"Feb",
-    "Quality":"NZ Summer"
+    "Location": "Events",
+    "Month": "Feb",
+    "Quality": "NZ Summer"
   },
   {
-    "Location":"313",
-    "Month":"Feb",
-    "Quality":"Closed"
+    "Location": "313",
+    "Month": "Feb",
+    "Quality": "Closed"
   },
   {
-    "Location":"Hipnotics",
-    "Month":"Feb",
-    "Quality":"Closed"
+    "Location": "Hipnotics",
+    "Month": "Feb",
+    "Quality": "Closed"
   },
   {
-    "Location":"Germany",
-    "Month":"Feb",
-    "Quality":"Winter"
+    "Location": "Germany",
+    "Month": "Feb",
+    "Quality": "Winter"
   },
   {
-    "Location":"France",
-    "Month":"Feb",
-    "Quality":"Winter"
+    "Location": "France",
+    "Month": "Feb",
+    "Quality": "Winter"
   },
   {
-    "Location":"Romania",
-    "Month":"Feb",
-    "Quality":"Winter"
+    "Location": "Romania",
+    "Month": "Feb",
+    "Quality": "Winter"
   },
   {
-    "Location":"Hungary",
-    "Month":"Feb",
-    "Quality":"Winter"
+    "Location": "Hungary",
+    "Month": "Feb",
+    "Quality": "Winter"
   },
   {
-    "Location":"Japan",
-    "Month":"Feb",
-    "Quality":"Winter"
+    "Location": "Japan",
+    "Month": "Feb",
+    "Quality": "Winter"
   },
   {
-    "Location":"NZ",
-    "Month":"Feb",
-    "Quality":"Summer"
+    "Location": "NZ",
+    "Month": "Feb",
+    "Quality": "Summer"
   },
   {
-    "Location":"California",
-    "Month":"Feb",
-    "Quality":"Winter"
+    "Location": "California",
+    "Month": "Feb",
+    "Quality": "Winter"
   },
   {
-    "Location":"Thailand",
-    "Month":"Feb",
-    "Quality":"Spring"
+    "Location": "Thailand",
+    "Month": "Feb",
+    "Quality": "Spring"
   },
   {
-    "Location":"Vietnam",
-    "Month":"Feb",
-    "Quality":"Spring"
+    "Location": "Vietnam",
+    "Month": "Feb",
+    "Quality": "Spring"
   },
   {
-    "Location":"Mexico",
-    "Month":"Feb",
-    "Quality":"Spring"
+    "Location": "Mexico",
+    "Month": "Feb",
+    "Quality": "Spring"
   },
   {
-    "Location":"Baltics",
-    "Month":"Feb",
-    "Quality":"Winter"
+    "Location": "Baltics",
+    "Month": "Feb",
+    "Quality": "Winter"
   },
   {
-    "Location":"Italy",
-    "Month":"Feb",
-    "Quality":"Winter"
+    "Location": "Italy",
+    "Month": "Feb",
+    "Quality": "Winter"
   },
   {
-    "Location":"Greece",
-    "Month":"Feb",
-    "Quality":"Winter"
+    "Location": "Greece",
+    "Month": "Feb",
+    "Quality": "Winter"
   },
   {
-    "Location":"Australia",
-    "Month":"Feb",
-    "Quality":"Summer"
+    "Location": "Australia",
+    "Month": "Feb",
+    "Quality": "Summer"
   },
   {
-    "Location":"Events",
-    "Month":"Mar",
-    "Quality":"ISO 14064"
+    "Location": "Events",
+    "Month": "Mar",
+    "Quality": "ISO 14064"
   },
   {
-    "Location":"313",
-    "Month":"Mar",
-    "Quality":"Closed"
+    "Location": "313",
+    "Month": "Mar",
+    "Quality": "Closed"
   },
   {
-    "Location":"Hipnotics",
-    "Month":"Mar",
-    "Quality":"Winter"
+    "Location": "Hipnotics",
+    "Month": "Mar",
+    "Quality": "Winter"
   },
   {
-    "Location":"Germany",
-    "Month":"Mar",
-    "Quality":"Winter"
+    "Location": "Germany",
+    "Month": "Mar",
+    "Quality": "Winter"
   },
   {
-    "Location":"France",
-    "Month":"Mar",
-    "Quality":"Winter"
+    "Location": "France",
+    "Month": "Mar",
+    "Quality": "Winter"
   },
   {
-    "Location":"Romania",
-    "Month":"Mar",
-    "Quality":"Winter"
+    "Location": "Romania",
+    "Month": "Mar",
+    "Quality": "Winter"
   },
   {
-    "Location":"Hungary",
-    "Month":"Mar",
-    "Quality":"Winter"
+    "Location": "Hungary",
+    "Month": "Mar",
+    "Quality": "Winter"
   },
   {
-    "Location":"Japan",
-    "Month":"Mar",
-    "Quality":"Winter"
+    "Location": "Japan",
+    "Month": "Mar",
+    "Quality": "Winter"
   },
   {
-    "Location":"NZ",
-    "Month":"Mar",
-    "Quality":"Summer"
+    "Location": "NZ",
+    "Month": "Mar",
+    "Quality": "Summer"
   },
   {
-    "Location":"California",
-    "Month":"Mar",
-    "Quality":"Winter"
+    "Location": "California",
+    "Month": "Mar",
+    "Quality": "Winter"
   },
   {
-    "Location":"Thailand",
-    "Month":"Mar",
-    "Quality":"Spring"
+    "Location": "Thailand",
+    "Month": "Mar",
+    "Quality": "Spring"
   },
   {
-    "Location":"Vietnam",
-    "Month":"Mar",
-    "Quality":"Spring"
+    "Location": "Vietnam",
+    "Month": "Mar",
+    "Quality": "Spring"
   },
   {
-    "Location":"Mexico",
-    "Month":"Mar",
-    "Quality":"Spring"
+    "Location": "Mexico",
+    "Month": "Mar",
+    "Quality": "Spring"
   },
   {
-    "Location":"Baltics",
-    "Month":"Mar",
-    "Quality":"Winter"
+    "Location": "Baltics",
+    "Month": "Mar",
+    "Quality": "Winter"
   },
   {
-    "Location":"Italy",
-    "Month":"Mar",
-    "Quality":"Winter"
+    "Location": "Italy",
+    "Month": "Mar",
+    "Quality": "Winter"
   },
   {
-    "Location":"Greece",
-    "Month":"Mar",
-    "Quality":"Winter"
+    "Location": "Greece",
+    "Month": "Mar",
+    "Quality": "Winter"
   },
   {
-    "Location":"Australia",
-    "Month":"Mar",
-    "Quality":"Summer"
+    "Location": "Australia",
+    "Month": "Mar",
+    "Quality": "Summer"
   },
   {
-    "Location":"Events",
-    "Month":"Apr",
-    "Quality":""
+    "Location": "Events",
+    "Month": "Apr",
+    "Quality": ""
   },
   {
-    "Location":"313",
-    "Month":"Apr",
-    "Quality":"Closed"
+    "Location": "313",
+    "Month": "Apr",
+    "Quality": "Closed"
   },
   {
-    "Location":"Hipnotics",
-    "Month":"Apr",
-    "Quality":"Winter"
+    "Location": "Hipnotics",
+    "Month": "Apr",
+    "Quality": "Winter"
   },
   {
-    "Location":"Germany",
-    "Month":"Apr",
-    "Quality":"Winter"
+    "Location": "Germany",
+    "Month": "Apr",
+    "Quality": "Winter"
   },
   {
-    "Location":"France",
-    "Month":"Apr",
-    "Quality":"Winter"
+    "Location": "France",
+    "Month": "Apr",
+    "Quality": "Winter"
   },
   {
-    "Location":"Romania",
-    "Month":"Apr",
-    "Quality":"Winter"
+    "Location": "Romania",
+    "Month": "Apr",
+    "Quality": "Winter"
   },
   {
-    "Location":"Hungary",
-    "Month":"Apr",
-    "Quality":"Winter"
+    "Location": "Hungary",
+    "Month": "Apr",
+    "Quality": "Winter"
   },
   {
-    "Location":"Japan",
-    "Month":"Apr",
-    "Quality":"Spring"
+    "Location": "Japan",
+    "Month": "Apr",
+    "Quality": "Spring"
   },
   {
-    "Location":"NZ",
-    "Month":"Apr",
-    "Quality":"Autumn"
+    "Location": "NZ",
+    "Month": "Apr",
+    "Quality": "Autumn"
   },
   {
-    "Location":"California",
-    "Month":"Apr",
-    "Quality":"Spring"
+    "Location": "California",
+    "Month": "Apr",
+    "Quality": "Spring"
   },
   {
-    "Location":"Thailand",
-    "Month":"Apr",
-    "Quality":"Summer"
+    "Location": "Thailand",
+    "Month": "Apr",
+    "Quality": "Summer"
   },
   {
-    "Location":"Vietnam",
-    "Month":"Apr",
-    "Quality":"Spring"
+    "Location": "Vietnam",
+    "Month": "Apr",
+    "Quality": "Spring"
   },
   {
-    "Location":"Mexico",
-    "Month":"Apr",
-    "Quality":"Spring"
+    "Location": "Mexico",
+    "Month": "Apr",
+    "Quality": "Spring"
   },
   {
-    "Location":"Baltics",
-    "Month":"Apr",
-    "Quality":"Winter"
+    "Location": "Baltics",
+    "Month": "Apr",
+    "Quality": "Winter"
   },
   {
-    "Location":"Italy",
-    "Month":"Apr",
-    "Quality":"Winter"
+    "Location": "Italy",
+    "Month": "Apr",
+    "Quality": "Winter"
   },
   {
-    "Location":"Greece",
-    "Month":"Apr",
-    "Quality":"Spring"
+    "Location": "Greece",
+    "Month": "Apr",
+    "Quality": "Spring"
   },
   {
-    "Location":"Australia",
-    "Month":"Apr",
-    "Quality":"Summer"
+    "Location": "Australia",
+    "Month": "Apr",
+    "Quality": "Summer"
   },
   {
-    "Location":"Events",
-    "Month":"May",
-    "Quality":"ISO Audits"
+    "Location": "Events",
+    "Month": "May",
+    "Quality": "ISO Audits"
   },
   {
-    "Location":"313",
-    "Month":"May",
-    "Quality":"Closed"
+    "Location": "313",
+    "Month": "May",
+    "Quality": "Closed"
   },
   {
-    "Location":"Hipnotics",
-    "Month":"May",
-    "Quality":"Spring"
+    "Location": "Hipnotics",
+    "Month": "May",
+    "Quality": "Spring"
   },
   {
-    "Location":"Germany",
-    "Month":"May",
-    "Quality":"Winter"
+    "Location": "Germany",
+    "Month": "May",
+    "Quality": "Winter"
   },
   {
-    "Location":"France",
-    "Month":"May",
-    "Quality":"Spring"
+    "Location": "France",
+    "Month": "May",
+    "Quality": "Spring"
   },
   {
-    "Location":"Romania",
-    "Month":"May",
-    "Quality":"Winter"
+    "Location": "Romania",
+    "Month": "May",
+    "Quality": "Winter"
   },
   {
-    "Location":"Hungary",
-    "Month":"May",
-    "Quality":"Spring"
+    "Location": "Hungary",
+    "Month": "May",
+    "Quality": "Spring"
   },
   {
-    "Location":"Japan",
-    "Month":"May",
-    "Quality":"Spring"
+    "Location": "Japan",
+    "Month": "May",
+    "Quality": "Spring"
   },
   {
-    "Location":"NZ",
-    "Month":"May",
-    "Quality":"Autumn"
+    "Location": "NZ",
+    "Month": "May",
+    "Quality": "Autumn"
   },
   {
-    "Location":"California",
-    "Month":"May",
-    "Quality":"Spring"
+    "Location": "California",
+    "Month": "May",
+    "Quality": "Spring"
   },
   {
-    "Location":"Thailand",
-    "Month":"May",
-    "Quality":"Summer"
+    "Location": "Thailand",
+    "Month": "May",
+    "Quality": "Summer"
   },
   {
-    "Location":"Vietnam",
-    "Month":"May",
-    "Quality":"Spring"
+    "Location": "Vietnam",
+    "Month": "May",
+    "Quality": "Spring"
   },
   {
-    "Location":"Mexico",
-    "Month":"May",
-    "Quality":"Spring"
+    "Location": "Mexico",
+    "Month": "May",
+    "Quality": "Spring"
   },
   {
-    "Location":"Baltics",
-    "Month":"May",
-    "Quality":"Winter"
+    "Location": "Baltics",
+    "Month": "May",
+    "Quality": "Winter"
   },
   {
-    "Location":"Italy",
-    "Month":"May",
-    "Quality":"Spring"
+    "Location": "Italy",
+    "Month": "May",
+    "Quality": "Spring"
   },
   {
-    "Location":"Greece",
-    "Month":"May",
-    "Quality":"Spring"
+    "Location": "Greece",
+    "Month": "May",
+    "Quality": "Spring"
   },
   {
-    "Location":"Australia",
-    "Month":"May",
-    "Quality":"Autumn"
+    "Location": "Australia",
+    "Month": "May",
+    "Quality": "Autumn"
   },
   {
-    "Location":"Events",
-    "Month":"Jun",
-    "Quality":""
+    "Location": "Events",
+    "Month": "Jun",
+    "Quality": ""
   },
   {
-    "Location":"313",
-    "Month":"Jun",
-    "Quality":"Winter"
+    "Location": "313",
+    "Month": "Jun",
+    "Quality": "Winter"
   },
   {
-    "Location":"Hipnotics",
-    "Month":"Jun",
-    "Quality":"Spring"
+    "Location": "Hipnotics",
+    "Month": "Jun",
+    "Quality": "Spring"
   },
   {
-    "Location":"Germany",
-    "Month":"Jun",
-    "Quality":"Spring"
+    "Location": "Germany",
+    "Month": "Jun",
+    "Quality": "Spring"
   },
   {
-    "Location":"France",
-    "Month":"Jun",
-    "Quality":"Spring"
+    "Location": "France",
+    "Month": "Jun",
+    "Quality": "Spring"
   },
   {
-    "Location":"Romania",
-    "Month":"Jun",
-    "Quality":"Spring"
+    "Location": "Romania",
+    "Month": "Jun",
+    "Quality": "Spring"
   },
   {
-    "Location":"Hungary",
-    "Month":"Jun",
-    "Quality":"Spring"
+    "Location": "Hungary",
+    "Month": "Jun",
+    "Quality": "Spring"
   },
   {
-    "Location":"Japan",
-    "Month":"Jun",
-    "Quality":"Spring"
+    "Location": "Japan",
+    "Month": "Jun",
+    "Quality": "Spring"
   },
   {
-    "Location":"NZ",
-    "Month":"Jun",
-    "Quality":""
+    "Location": "NZ",
+    "Month": "Jun",
+    "Quality": "Winter"
   },
   {
-    "Location":"California",
-    "Month":"Jun",
-    "Quality":"Spring"
+    "Location": "California",
+    "Month": "Jun",
+    "Quality": "Spring"
   },
   {
-    "Location":"Thailand",
-    "Month":"Jun",
-    "Quality":"Summer"
+    "Location": "Thailand",
+    "Month": "Jun",
+    "Quality": "Summer"
   },
   {
-    "Location":"Vietnam",
-    "Month":"Jun",
-    "Quality":"Summer"
+    "Location": "Vietnam",
+    "Month": "Jun",
+    "Quality": "Summer"
   },
   {
-    "Location":"Mexico",
-    "Month":"Jun",
-    "Quality":"Summer"
+    "Location": "Mexico",
+    "Month": "Jun",
+    "Quality": "Summer"
   },
   {
-    "Location":"Baltics",
-    "Month":"Jun",
-    "Quality":"Spring"
+    "Location": "Baltics",
+    "Month": "Jun",
+    "Quality": "Spring"
   },
   {
-    "Location":"Italy",
-    "Month":"Jun",
-    "Quality":"Summer"
+    "Location": "Italy",
+    "Month": "Jun",
+    "Quality": "Summer"
   },
   {
-    "Location":"Greece",
-    "Month":"Jun",
-    "Quality":"Summer"
+    "Location": "Greece",
+    "Month": "Jun",
+    "Quality": "Summer"
   },
   {
-    "Location":"Australia",
-    "Month":"Jun",
-    "Quality":"Autumn"
+    "Location": "Australia",
+    "Month": "Jun",
+    "Quality": "Autumn"
   },
   {
-    "Location":"Events",
-    "Month":"Jul",
-    "Quality":""
+    "Location": "Events",
+    "Month": "Jul",
+    "Quality": ""
   },
   {
-    "Location":"313",
-    "Month":"Jul",
-    "Quality":"Spring"
+    "Location": "313",
+    "Month": "Jul",
+    "Quality": "Spring"
   },
   {
-    "Location":"Hipnotics",
-    "Month":"Jul",
-    "Quality":"Summer"
+    "Location": "Hipnotics",
+    "Month": "Jul",
+    "Quality": "Summer"
   },
   {
-    "Location":"Germany",
-    "Month":"Jul",
-    "Quality":"Summer"
+    "Location": "Germany",
+    "Month": "Jul",
+    "Quality": "Summer"
   },
   {
-    "Location":"France",
-    "Month":"Jul",
-    "Quality":"Summer"
+    "Location": "France",
+    "Month": "Jul",
+    "Quality": "Summer"
   },
   {
-    "Location":"Romania",
-    "Month":"Jul",
-    "Quality":"Summer"
+    "Location": "Romania",
+    "Month": "Jul",
+    "Quality": "Summer"
   },
   {
-    "Location":"Hungary",
-    "Month":"Jul",
-    "Quality":"Summer"
+    "Location": "Hungary",
+    "Month": "Jul",
+    "Quality": "Summer"
   },
   {
-    "Location":"Japan",
-    "Month":"Jul",
-    "Quality":"Summer"
+    "Location": "Japan",
+    "Month": "Jul",
+    "Quality": "Summer"
   },
   {
-    "Location":"NZ",
-    "Month":"Jul",
-    "Quality":""
+    "Location": "NZ",
+    "Month": "Jul",
+    "Quality": "Winter"
   },
   {
-    "Location":"California",
-    "Month":"Jul",
-    "Quality":"Summer"
+    "Location": "California",
+    "Month": "Jul",
+    "Quality": "Summer"
   },
   {
-    "Location":"Thailand",
-    "Month":"Jul",
-    "Quality":"Monsoon"
+    "Location": "Thailand",
+    "Month": "Jul",
+    "Quality": "Monsoon"
   },
   {
-    "Location":"Vietnam",
-    "Month":"Jul",
-    "Quality":"Summer"
+    "Location": "Vietnam",
+    "Month": "Jul",
+    "Quality": "Summer"
   },
   {
-    "Location":"Mexico",
-    "Month":"Jul",
-    "Quality":"Hurricane"
+    "Location": "Mexico",
+    "Month": "Jul",
+    "Quality": "Hurricane"
   },
   {
-    "Location":"Baltics",
-    "Month":"Jul",
-    "Quality":"Summer"
+    "Location": "Baltics",
+    "Month": "Jul",
+    "Quality": "Summer"
   },
   {
-    "Location":"Italy",
-    "Month":"Jul",
-    "Quality":"Summer"
+    "Location": "Italy",
+    "Month": "Jul",
+    "Quality": "Summer"
   },
   {
-    "Location":"Greece",
-    "Month":"Jul",
-    "Quality":"Summer"
+    "Location": "Greece",
+    "Month": "Jul",
+    "Quality": "Summer"
   },
   {
-    "Location":"Australia",
-    "Month":"Jul",
-    "Quality":"Winter"
+    "Location": "Australia",
+    "Month": "Jul",
+    "Quality": "Winter"
   },
   {
-    "Location":"Events",
-    "Month":"Aug",
-    "Quality":""
+    "Location": "Events",
+    "Month": "Aug",
+    "Quality": ""
   },
   {
-    "Location":"313",
-    "Month":"Aug",
-    "Quality":"Summer"
+    "Location": "313",
+    "Month": "Aug",
+    "Quality": "Summer"
   },
   {
-    "Location":"Hipnotics",
-    "Month":"Aug",
-    "Quality":"Summer"
+    "Location": "Hipnotics",
+    "Month": "Aug",
+    "Quality": "Summer"
   },
   {
-    "Location":"Germany",
-    "Month":"Aug",
-    "Quality":"Summer"
+    "Location": "Germany",
+    "Month": "Aug",
+    "Quality": "Summer"
   },
   {
-    "Location":"France",
-    "Month":"Aug",
-    "Quality":"Summer"
+    "Location": "France",
+    "Month": "Aug",
+    "Quality": "Summer"
   },
   {
-    "Location":"Romania",
-    "Month":"Aug",
-    "Quality":"Summer"
+    "Location": "Romania",
+    "Month": "Aug",
+    "Quality": "Summer"
   },
   {
-    "Location":"Hungary",
-    "Month":"Aug",
-    "Quality":"Summer"
+    "Location": "Hungary",
+    "Month": "Aug",
+    "Quality": "Summer"
   },
   {
-    "Location":"Japan",
-    "Month":"Aug",
-    "Quality":"Summer"
+    "Location": "Japan",
+    "Month": "Aug",
+    "Quality": "Summer"
   },
   {
-    "Location":"NZ",
-    "Month":"Aug",
-    "Quality":""
+    "Location": "NZ",
+    "Month": "Aug",
+    "Quality": "Winter"
   },
   {
-    "Location":"California",
-    "Month":"Aug",
-    "Quality":"Summer"
+    "Location": "California",
+    "Month": "Aug",
+    "Quality": "Summer"
   },
   {
-    "Location":"Thailand",
-    "Month":"Aug",
-    "Quality":"Monsoon"
+    "Location": "Thailand",
+    "Month": "Aug",
+    "Quality": "Monsoon"
   },
   {
-    "Location":"Vietnam",
-    "Month":"Aug",
-    "Quality":"Summer"
+    "Location": "Vietnam",
+    "Month": "Aug",
+    "Quality": "Summer"
   },
   {
-    "Location":"Mexico",
-    "Month":"Aug",
-    "Quality":"Hurricane"
+    "Location": "Mexico",
+    "Month": "Aug",
+    "Quality": "Hurricane"
   },
   {
-    "Location":"Baltics",
-    "Month":"Aug",
-    "Quality":"Summer"
+    "Location": "Baltics",
+    "Month": "Aug",
+    "Quality": "Summer"
   },
   {
-    "Location":"Italy",
-    "Month":"Aug",
-    "Quality":"Summer"
+    "Location": "Italy",
+    "Month": "Aug",
+    "Quality": "Summer"
   },
   {
-    "Location":"Greece",
-    "Month":"Aug",
-    "Quality":"Summer"
+    "Location": "Greece",
+    "Month": "Aug",
+    "Quality": "Summer"
   },
   {
-    "Location":"Australia",
-    "Month":"Aug",
-    "Quality":"Winter"
+    "Location": "Australia",
+    "Month": "Aug",
+    "Quality": "Winter"
   },
   {
-    "Location":"Events",
-    "Month":"Sep",
-    "Quality":"Harvest"
+    "Location": "Events",
+    "Month": "Sep",
+    "Quality": "Harvest"
   },
   {
-    "Location":"313",
-    "Month":"Sep",
-    "Quality":"Autumn"
+    "Location": "313",
+    "Month": "Sep",
+    "Quality": "Autumn"
   },
   {
-    "Location":"Hipnotics",
-    "Month":"Sep",
-    "Quality":"Summer"
+    "Location": "Hipnotics",
+    "Month": "Sep",
+    "Quality": "Summer"
   },
   {
-    "Location":"Germany",
-    "Month":"Sep",
-    "Quality":"Summer"
+    "Location": "Germany",
+    "Month": "Sep",
+    "Quality": "Summer"
   },
   {
-    "Location":"France",
-    "Month":"Sep",
-    "Quality":"Summer"
+    "Location": "France",
+    "Month": "Sep",
+    "Quality": "Summer"
   },
   {
-    "Location":"Romania",
-    "Month":"Sep",
-    "Quality":"Summer"
+    "Location": "Romania",
+    "Month": "Sep",
+    "Quality": "Summer"
   },
   {
-    "Location":"Hungary",
-    "Month":"Sep",
-    "Quality":"Summer"
+    "Location": "Hungary",
+    "Month": "Sep",
+    "Quality": "Summer"
   },
   {
-    "Location":"Japan",
-    "Month":"Sep",
-    "Quality":"Summer"
+    "Location": "Japan",
+    "Month": "Sep",
+    "Quality": "Summer"
   },
   {
-    "Location":"NZ",
-    "Month":"Sep",
-    "Quality":""
+    "Location": "NZ",
+    "Month": "Sep",
+    "Quality": "Spring"
   },
   {
-    "Location":"California",
-    "Month":"Sep",
-    "Quality":"Summer"
+    "Location": "California",
+    "Month": "Sep",
+    "Quality": "Summer"
   },
   {
-    "Location":"Thailand",
-    "Month":"Sep",
-    "Quality":"Monsoon"
+    "Location": "Thailand",
+    "Month": "Sep",
+    "Quality": "Monsoon"
   },
   {
-    "Location":"Vietnam",
-    "Month":"Sep",
-    "Quality":"Summer"
+    "Location": "Vietnam",
+    "Month": "Sep",
+    "Quality": "Summer"
   },
   {
-    "Location":"Mexico",
-    "Month":"Sep",
-    "Quality":"Hurricane"
+    "Location": "Mexico",
+    "Month": "Sep",
+    "Quality": "Hurricane"
   },
   {
-    "Location":"Baltics",
-    "Month":"Sep",
-    "Quality":"Summer"
+    "Location": "Baltics",
+    "Month": "Sep",
+    "Quality": "Summer"
   },
   {
-    "Location":"Italy",
-    "Month":"Sep",
-    "Quality":"Summer"
+    "Location": "Italy",
+    "Month": "Sep",
+    "Quality": "Summer"
   },
   {
-    "Location":"Greece",
-    "Month":"Sep",
-    "Quality":"Summer"
+    "Location": "Greece",
+    "Month": "Sep",
+    "Quality": "Summer"
   },
   {
-    "Location":"Australia",
-    "Month":"Sep",
-    "Quality":"Spring"
+    "Location": "Australia",
+    "Month": "Sep",
+    "Quality": "Spring"
   },
   {
-    "Location":"Events",
-    "Month":"Oct",
-    "Quality":"Harvest"
+    "Location": "Events",
+    "Month": "Oct",
+    "Quality": "Harvest"
   },
   {
-    "Location":"313",
-    "Month":"Oct",
-    "Quality":"Winter"
+    "Location": "313",
+    "Month": "Oct",
+    "Quality": "Winter"
   },
   {
-    "Location":"Hipnotics",
-    "Month":"Oct",
-    "Quality":"Autumn"
+    "Location": "Hipnotics",
+    "Month": "Oct",
+    "Quality": "Autumn"
   },
   {
-    "Location":"Germany",
-    "Month":"Oct",
-    "Quality":"Autumn"
+    "Location": "Germany",
+    "Month": "Oct",
+    "Quality": "Autumn"
   },
   {
-    "Location":"France",
-    "Month":"Oct",
-    "Quality":"Autumn"
+    "Location": "France",
+    "Month": "Oct",
+    "Quality": "Autumn"
   },
   {
-    "Location":"Romania",
-    "Month":"Oct",
-    "Quality":"Summer"
+    "Location": "Romania",
+    "Month": "Oct",
+    "Quality": "Summer"
   },
   {
-    "Location":"Hungary",
-    "Month":"Oct",
-    "Quality":"Autumn"
+    "Location": "Hungary",
+    "Month": "Oct",
+    "Quality": "Autumn"
   },
   {
-    "Location":"Japan",
-    "Month":"Oct",
-    "Quality":"Summer"
+    "Location": "Japan",
+    "Month": "Oct",
+    "Quality": "Summer"
   },
   {
-    "Location":"NZ",
-    "Month":"Oct",
-    "Quality":""
+    "Location": "NZ",
+    "Month": "Oct",
+    "Quality": "Spring"
   },
   {
-    "Location":"California",
-    "Month":"Oct",
-    "Quality":"Summer"
+    "Location": "California",
+    "Month": "Oct",
+    "Quality": "Summer"
   },
   {
-    "Location":"Thailand",
-    "Month":"Oct",
-    "Quality":"Monsoon"
+    "Location": "Thailand",
+    "Month": "Oct",
+    "Quality": "Monsoon"
   },
   {
-    "Location":"Vietnam",
-    "Month":"Oct",
-    "Quality":"Summer"
+    "Location": "Vietnam",
+    "Month": "Oct",
+    "Quality": "Summer"
   },
   {
-    "Location":"Mexico",
-    "Month":"Oct",
-    "Quality":"Hurricane"
+    "Location": "Mexico",
+    "Month": "Oct",
+    "Quality": "Hurricane"
   },
   {
-    "Location":"Baltics",
-    "Month":"Oct",
-    "Quality":"Autumn"
+    "Location": "Baltics",
+    "Month": "Oct",
+    "Quality": "Autumn"
   },
   {
-    "Location":"Italy",
-    "Month":"Oct",
-    "Quality":"Summer"
+    "Location": "Italy",
+    "Month": "Oct",
+    "Quality": "Summer"
   },
   {
-    "Location":"Greece",
-    "Month":"Oct",
-    "Quality":"Summer"
+    "Location": "Greece",
+    "Month": "Oct",
+    "Quality": "Summer"
   },
   {
-    "Location":"Australia",
-    "Month":"Oct",
-    "Quality":"Spring"
+    "Location": "Australia",
+    "Month": "Oct",
+    "Quality": "Spring"
   },
   {
-    "Location":"Events",
-    "Month":"Nov",
-    "Quality":"Harvest"
+    "Location": "Events",
+    "Month": "Nov",
+    "Quality": "Harvest"
   },
   {
-    "Location":"313",
-    "Month":"Nov",
-    "Quality":"Closed"
+    "Location": "313",
+    "Month": "Nov",
+    "Quality": "Closed"
   },
   {
-    "Location":"Hipnotics",
-    "Month":"Nov",
-    "Quality":"Autumn"
+    "Location": "Hipnotics",
+    "Month": "Nov",
+    "Quality": "Autumn"
   },
   {
-    "Location":"Germany",
-    "Month":"Nov",
-    "Quality":"Winter"
+    "Location": "Germany",
+    "Month": "Nov",
+    "Quality": "Winter"
   },
   {
-    "Location":"France",
-    "Month":"Nov",
-    "Quality":"Autumn"
+    "Location": "France",
+    "Month": "Nov",
+    "Quality": "Autumn"
   },
   {
-    "Location":"Romania",
-    "Month":"Nov",
-    "Quality":"Winter"
+    "Location": "Romania",
+    "Month": "Nov",
+    "Quality": "Winter"
   },
   {
-    "Location":"Hungary",
-    "Month":"Nov",
-    "Quality":"Autumn"
+    "Location": "Hungary",
+    "Month": "Nov",
+    "Quality": "Autumn"
   },
   {
-    "Location":"Japan",
-    "Month":"Nov",
-    "Quality":"Autumn"
+    "Location": "Japan",
+    "Month": "Nov",
+    "Quality": "Autumn"
   },
   {
-    "Location":"NZ",
-    "Month":"Nov",
-    "Quality":"Spring"
+    "Location": "NZ",
+    "Month": "Nov",
+    "Quality": "Spring"
   },
   {
-    "Location":"California",
-    "Month":"Nov",
-    "Quality":"Autumn"
+    "Location": "California",
+    "Month": "Nov",
+    "Quality": "Autumn"
   },
   {
-    "Location":"Thailand",
-    "Month":"Nov",
-    "Quality":"Monsoon"
+    "Location": "Thailand",
+    "Month": "Nov",
+    "Quality": "Monsoon"
   },
   {
-    "Location":"Vietnam",
-    "Month":"Nov",
-    "Quality":"Summer"
+    "Location": "Vietnam",
+    "Month": "Nov",
+    "Quality": "Summer"
   },
   {
-    "Location":"Mexico",
-    "Month":"Nov",
-    "Quality":"Hurricane"
+    "Location": "Mexico",
+    "Month": "Nov",
+    "Quality": "Hurricane"
   },
   {
-    "Location":"Baltics",
-    "Month":"Nov",
-    "Quality":"Winter"
+    "Location": "Baltics",
+    "Month": "Nov",
+    "Quality": "Winter"
   },
   {
-    "Location":"Italy",
-    "Month":"Nov",
-    "Quality":"Autumn"
+    "Location": "Italy",
+    "Month": "Nov",
+    "Quality": "Autumn"
   },
   {
-    "Location":"Greece",
-    "Month":"Nov",
-    "Quality":"Autumn"
+    "Location": "Greece",
+    "Month": "Nov",
+    "Quality": "Autumn"
   },
   {
-    "Location":"Australia",
-    "Month":"Nov",
-    "Quality":"Spring"
+    "Location": "Australia",
+    "Month": "Nov",
+    "Quality": "Spring"
   },
   {
-    "Location":"Events",
-    "Month":"Dec",
-    "Quality":""
+    "Location": "Events",
+    "Month": "Dec",
+    "Quality": ""
   },
   {
-    "Location":"313",
-    "Month":"Dec",
-    "Quality":"Closed"
+    "Location": "313",
+    "Month": "Dec",
+    "Quality": "Closed"
   },
   {
-    "Location":"Hipnotics",
-    "Month":"Dec",
-    "Quality":"Winter"
+    "Location": "Hipnotics",
+    "Month": "Dec",
+    "Quality": "Winter"
   },
   {
-    "Location":"Germany",
-    "Month":"Dec",
-    "Quality":"Winter"
+    "Location": "Germany",
+    "Month": "Dec",
+    "Quality": "Winter"
   },
   {
-    "Location":"France",
-    "Month":"Dec",
-    "Quality":"Winter"
+    "Location": "France",
+    "Month": "Dec",
+    "Quality": "Winter"
   },
   {
-    "Location":"Romania",
-    "Month":"Dec",
-    "Quality":"Winter"
+    "Location": "Romania",
+    "Month": "Dec",
+    "Quality": "Winter"
   },
   {
-    "Location":"Hungary",
-    "Month":"Dec",
-    "Quality":"Winter"
+    "Location": "Hungary",
+    "Month": "Dec",
+    "Quality": "Winter"
   },
   {
-    "Location":"Japan",
-    "Month":"Dec",
-    "Quality":"Autumn"
+    "Location": "Japan",
+    "Month": "Dec",
+    "Quality": "Autumn"
   },
   {
-    "Location":"NZ",
-    "Month":"Dec",
-    "Quality":"Spring"
+    "Location": "NZ",
+    "Month": "Dec",
+    "Quality": "Spring"
   },
   {
-    "Location":"California",
-    "Month":"Dec",
-    "Quality":"Autumn"
+    "Location": "California",
+    "Month": "Dec",
+    "Quality": "Autumn"
   },
   {
-    "Location":"Thailand",
-    "Month":"Dec",
-    "Quality":"Autumn"
+    "Location": "Thailand",
+    "Month": "Dec",
+    "Quality": "Autumn"
   },
   {
-    "Location":"Vietnam",
-    "Month":"Dec",
-    "Quality":"Autumn"
+    "Location": "Vietnam",
+    "Month": "Dec",
+    "Quality": "Autumn"
   },
   {
-    "Location":"Mexico",
-    "Month":"Dec",
-    "Quality":"Autumn"
+    "Location": "Mexico",
+    "Month": "Dec",
+    "Quality": "Autumn"
   },
   {
-    "Location":"Baltics",
-    "Month":"Dec",
-    "Quality":"Winter"
+    "Location": "Baltics",
+    "Month": "Dec",
+    "Quality": "Winter"
   },
   {
-    "Location":"Italy",
-    "Month":"Dec",
-    "Quality":"Winter"
+    "Location": "Italy",
+    "Month": "Dec",
+    "Quality": "Winter"
   },
   {
-    "Location":"Greece",
-    "Month":"Dec",
-    "Quality":"Autumn"
+    "Location": "Greece",
+    "Month": "Dec",
+    "Quality": "Autumn"
   },
   {
-    "Location":"Australia",
-    "Month":"Dec",
-    "Quality":"Summer"
+    "Location": "Australia",
+    "Month": "Dec",
+    "Quality": "Summer"
   }
 ]

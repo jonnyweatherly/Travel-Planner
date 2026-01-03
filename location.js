@@ -275,8 +275,20 @@ function renderLocationDetail(location, seasonByMonth, trips) {
     }
 
     container.innerHTML = `
+        <div class="page-navigation" style="margin-bottom: 2rem; padding: 1rem; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+            <a href="#season-section" style="padding: 0.5rem 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--accent-color); border-radius: 6px; text-decoration: none; font-size: 0.9rem;">📅 Seasons</a>
+            <a href="#overview-section" style="padding: 0.5rem 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--accent-color); border-radius: 6px; text-decoration: none; font-size: 0.9rem;">ℹ️ Overview</a>
+            <a href="#costs-section" style="padding: 0.5rem 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--accent-color); border-radius: 6px; text-decoration: none; font-size: 0.9rem;">💰 Costs</a>
+            ${trips.length > 0 ? '<a href="#trips-section" style="padding: 0.5rem 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--accent-color); border-radius: 6px; text-decoration: none; font-size: 0.9rem;">✈️ Trip History</a>' : ''}
+        </div>
+
         <div class="detail-grid">
-            <div class="detail-section">
+            <div id="season-section" class="detail-section full-width">
+                <h2>Season Calendar</h2>
+                ${seasonCalendarHTML}
+            </div>
+
+            <div id="overview-section" class="detail-section">
                 <h2>Overview</h2>
                 <div class="detail-info-grid">
                     <div class="detail-info-item">
@@ -300,7 +312,7 @@ function renderLocationDetail(location, seasonByMonth, trips) {
                 </div>
             </div>
 
-            <div class="detail-section">
+            <div id="costs-section" class="detail-section">
                 <h2>Costs</h2>
                 <div class="cost-grid">
                     <div class="cost-item">
@@ -318,12 +330,7 @@ function renderLocationDetail(location, seasonByMonth, trips) {
                 </div>
             </div>
 
-            <div class="detail-section full-width">
-                <h2>Season Calendar</h2>
-                ${seasonCalendarHTML}
-            </div>
-
-            ${tripsHTML ? `<div class="detail-section full-width">${tripsHTML}</div>` : ''}
+            ${tripsHTML ? `<div id="trips-section" class="detail-section full-width">${tripsHTML}</div>` : ''}
         </div>
     `;
 }

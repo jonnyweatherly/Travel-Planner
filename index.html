@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Travel & Sport Planner</title>
+    <title>NomadPlan - Digital Nomad Travel Planner</title>
     <link rel="stylesheet" href="style.css?v=5">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,7 +15,7 @@
         <!-- Sidebar Navigation -->
         <nav class="sidebar">
             <div class="logo">
-                <h2>Travel<span class="highlight">X</span></h2>
+                <h2>Nomad<span class="highlight">Plan</span></h2>
             </div>
             
             <ul class="nav-links">
@@ -25,64 +25,128 @@
                 <li data-view="timeline" onclick="switchView('timeline')">
                     <span class="icon">📅</span> Timeline
                 </li>
+                <li data-view="reports" onclick="switchView('reports')">
+                    <span class="icon">📊</span> Reports
+                </li>
+                <li data-view="todo" onclick="switchView('todo')">
+                    <span class="icon">✓</span> To-Do
+                </li>
+                <li data-view="packing" onclick="switchView('packing')">
+                    <span class="icon">🎒</span> Packing
+                </li>
+                <li data-view="friends" onclick="switchView('friends')">
+                    <span class="icon">👥</span> Friends & Family
+                </li>
                 <li data-view="config" onclick="switchView('config')">
-                    <span class="icon">⚙️</span> Settings
+                    <span class="icon">⚙️</span> Configuration
                 </li>
             </ul>
 
             <div class="filters-panel" id="filters-locations">
                 <h3>Filters</h3>
-                <div class="filter-group">
-                    <label>Sport</label>
-                    <select id="sport-filter" onchange="renderCurrentView()">
-                        <option value="all">All Sports</option>
-                        <!-- Populated by JS -->
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Continent</label>
-                    <select id="region-filter" onchange="renderCurrentView()">
-                        <option value="all">All Continents</option>
-                        <!-- Populated by JS -->
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Countries</label>
-                    <select id="country-filter" multiple size="5" onchange="renderCurrentView()">
-                        <!-- Populated by JS -->
-                    </select>
-                    <div class="filter-hint">Hold Ctrl/Cmd to select multiple</div>
-                </div>
-                <div class="filter-group">
-                    <label>Season Quality</label>
-                    <select id="season-filter" onchange="renderCurrentView()">
-                        <option value="all">All Seasons</option>
-                        <!-- Populated by JS -->
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Visa Region</label>
-                    <select id="visa-filter" onchange="renderCurrentView()">
-                        <option value="all">All Visa Regions</option>
-                        <!-- Populated by JS -->
-                    </select>
-                </div>
 
-                <!-- Cost Range Filters -->
-                <div class="filter-group">
-                    <label>Weekly Cost (AUD)</label>
-                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                        <input type="number" id="min-weekly-cost" placeholder="Min" style="width: 100%;" onchange="renderCurrentView()">
-                        <span>-</span>
-                        <input type="number" id="max-weekly-cost" placeholder="Max" style="width: 100%;" onchange="renderCurrentView()">
+                <!-- Location Filters -->
+                <div class="filter-category">
+                    <div class="filter-category-header" onclick="toggleFilterCategory(this)">
+                        <span>📍 Location</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="filter-category-content active">
+                        <div class="filter-group">
+                            <label>Continent</label>
+                            <select id="region-filter" onchange="updateVisaRegionFilter(); renderCurrentView();">
+                                <option value="all">All Continents</option>
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Countries</label>
+                            <select id="country-filter" multiple size="5" onchange="renderCurrentView()">
+                                <!-- Populated by JS -->
+                            </select>
+                            <div class="filter-hint">Hold Ctrl/Cmd to select multiple</div>
+                        </div>
                     </div>
                 </div>
-                <div class="filter-group">
-                    <label>Food Cost (AUD/day)</label>
-                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                        <input type="number" id="min-food-cost" placeholder="Min" style="width: 100%;" onchange="renderCurrentView()">
-                        <span>-</span>
-                        <input type="number" id="max-food-cost" placeholder="Max" style="width: 100%;" onchange="renderCurrentView()">
+
+                <!-- Activity Filters -->
+                <div class="filter-category">
+                    <div class="filter-category-header" onclick="toggleFilterCategory(this)">
+                        <span>🏄 Activity</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="filter-category-content active">
+                        <div class="filter-group">
+                            <label>Sport</label>
+                            <select id="sport-filter" onchange="renderCurrentView()">
+                                <option value="all">All Sports</option>
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Season Quality</label>
+                            <select id="season-filter" onchange="renderCurrentView()">
+                                <option value="all">All Seasons</option>
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Languages</label>
+                            <select id="language-filter" multiple size="5" onchange="renderCurrentView()">
+                                <!-- Populated by JS -->
+                            </select>
+                            <div class="filter-hint">Hold Ctrl/Cmd to select multiple</div>
+                        </div>
+                        <div class="filter-group">
+                            <label>Interests</label>
+                            <select id="interests-filter" multiple size="5" onchange="renderCurrentView()">
+                                <!-- Populated by JS -->
+                            </select>
+                            <div class="filter-hint">Hold Ctrl/Cmd to select multiple</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Travel Filters -->
+                <div class="filter-category">
+                    <div class="filter-category-header" onclick="toggleFilterCategory(this)">
+                        <span>✈️ Travel</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="filter-category-content active">
+                        <div class="filter-group">
+                            <label>Visa Region</label>
+                            <select id="visa-filter" onchange="renderCurrentView()">
+                                <option value="all">All Visa Regions</option>
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cost Filters -->
+                <div class="filter-category">
+                    <div class="filter-category-header" onclick="toggleFilterCategory(this)">
+                        <span>💰 Cost</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="filter-category-content active">
+                        <div class="filter-group">
+                            <label>Weekly Cost (AUD)</label>
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                <input type="number" id="min-weekly-cost" placeholder="Min" style="width: 100%;" onchange="renderCurrentView()">
+                                <span>-</span>
+                                <input type="number" id="max-weekly-cost" placeholder="Max" style="width: 100%;" onchange="renderCurrentView()">
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label>Food Cost (AUD/day)</label>
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                <input type="number" id="min-food-cost" placeholder="Min" style="width: 100%;" onchange="renderCurrentView()">
+                                <span>-</span>
+                                <input type="number" id="max-food-cost" placeholder="Max" style="width: 100%;" onchange="renderCurrentView()">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -95,9 +159,15 @@
                     <h1 id="page-title">Explore Destinations</h1>
                     <p id="page-subtitle">Find your next adventure.</p>
                 </div>
-                <!-- Search bar could go here -->
-                <div class="search-bar">
-                    <input type="text" id="search-input" placeholder="Search cities, countries..." onkeyup="renderCurrentView()">
+                <!-- Combined Smart Search Bar -->
+                <div style="position: relative; margin-bottom: 0.5rem;">
+                    <div class="search-bar" style="position: relative;">
+                        <input type="text" id="search-input" placeholder="Search cities, countries... or try: 'Cheap wakeboarding in Asia that speaks English'" onkeyup="handleSmartSearch(event)" style="padding-right: 5rem;">
+                        <button onclick="clearAllFilters()" style="position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-secondary); cursor: pointer; font-size: 0.85rem;">
+                            Clear
+                        </button>
+                    </div>
+                    <div id="smart-query-feedback" style="margin-top: 0.5rem; padding: 0.5rem; border-radius: 6px; display: none; font-size: 0.9rem;"></div>
                 </div>
             </header>
 
@@ -196,11 +266,134 @@
                 </div>
             </div>
 
+            <div id="view-reports" class="view-section">
+                <div class="fixed-controls">
+                    <div class="controls-row">
+                        <div style="flex: 1;">
+                            <h2 style="margin: 0; color: var(--text-primary);">Trip Reports</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="scrollable-content">
+                    <div style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+                        <div class="detail-section">
+                            <h2>Generate Report</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Select date range to analyze your travel costs and statistics.</p>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                                <div class="filter-group">
+                                    <label>Start Date</label>
+                                    <input type="date" id="report-start-date" />
+                                </div>
+                                <div class="filter-group">
+                                    <label>End Date</label>
+                                    <input type="date" id="report-end-date" />
+                                </div>
+                            </div>
+
+                            <button class="location-link-btn" onclick="generateReport()" style="width: 100%; margin-bottom: 2rem;">
+                                Generate Report
+                            </button>
+
+                            <div id="report-results"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-todo" class="view-section">
+                <div class="fixed-controls">
+                    <div class="controls-row">
+                        <div style="flex: 1;">
+                            <h2 style="margin: 0; color: var(--text-primary);">Travel Logistics To-Do List</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="scrollable-content">
+                    <div style="max-width: 700px; margin: 0 auto; padding: 2rem;">
+                        <div class="detail-section">
+                            <h2>Add Task</h2>
+                            <div style="display: flex; gap: 0.5rem; margin-bottom: 2rem;">
+                                <input type="text" id="todo-input" placeholder="E.g., Book flights, Renew passport, Get travel insurance..." style="flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" onkeypress="if(event.key==='Enter') addTodoItem()" />
+                                <button class="location-link-btn" onclick="addTodoItem()" style="white-space: nowrap;">
+                                    Add Task
+                                </button>
+                            </div>
+
+                            <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Tasks</h3>
+                            <div id="todo-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-packing" class="view-section">
+                <div class="fixed-controls">
+                    <div class="controls-row">
+                        <div style="flex: 1;">
+                            <h2 style="margin: 0; color: var(--text-primary);">Packing List</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="scrollable-content">
+                    <div style="max-width: 700px; margin: 0 auto; padding: 2rem;">
+                        <div class="detail-section">
+                            <h2>Add Item</h2>
+                            <div style="display: flex; gap: 0.5rem; margin-bottom: 2rem;">
+                                <input type="text" id="packing-input" placeholder="E.g., Passport, Sunscreen, Laptop charger..." style="flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" onkeypress="if(event.key==='Enter') addPackingItem()" />
+                                <button class="location-link-btn" onclick="addPackingItem()" style="white-space: nowrap;">
+                                    Add Item
+                                </button>
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <h3 style="color: var(--text-primary); margin: 0;">Items</h3>
+                                <button onclick="clearPackedItems()" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
+                                    Clear Packed Items
+                                </button>
+                            </div>
+                            <div id="packing-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-friends" class="view-section">
+                <div class="fixed-controls">
+                    <div class="location-detail-content">
+                        <div class="info-section">
+                            <h2 style="color: var(--text-primary); margin-bottom: 1.5rem;">Friends & Family</h2>
+
+                            <div style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px;">
+                                <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Add Person</h3>
+                                <div style="display: grid; gap: 0.75rem;">
+                                    <input type="text" id="friend-name-input" placeholder="Name" style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                    <input type="text" id="friend-location-input" placeholder="Current Location (e.g., Bali, Indonesia)" style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                                        <input type="date" id="friend-start-date-input" placeholder="Start Date" style="padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                        <input type="date" id="friend-end-date-input" placeholder="End Date" style="padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                    </div>
+                                    <input type="url" id="friend-social-input" placeholder="Social Media URL (optional)" style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                    <button class="location-link-btn" onclick="addFriend()" style="width: 100%;">
+                                        Add Person
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <h3 style="color: var(--text-primary); margin: 0;">People</h3>
+                            </div>
+                            <div id="friends-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="view-config" class="view-section">
                 <div class="fixed-controls">
                     <div class="controls-row">
                         <div style="flex: 1;">
-                            <h2 style="margin: 0; color: var(--text-primary);">Settings</h2>
+                            <h2 style="margin: 0; color: var(--text-primary);">Configuration</h2>
                         </div>
                     </div>
                 </div>
@@ -214,17 +407,103 @@
                                 <input type="text" id="home-airport-input" placeholder="e.g., SYD, LAX, LHR" maxlength="3" style="text-transform: uppercase;" />
                                 <div class="filter-hint">Enter 3-letter IATA code</div>
                             </div>
-                            <button class="location-link-btn" onclick="saveHomeAirport()" style="margin-top: 1rem;">
-                                Save Settings
-                            </button>
-                            <div id="config-message" style="margin-top: 1rem; padding: 0.75rem; border-radius: 6px; display: none;"></div>
                         </div>
+
+                        <div class="detail-section" style="margin-top: 2rem;">
+                            <h2>Passports</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Add your passport details to track expiry dates and plan visa requirements.</p>
+
+                            <div id="passport-list"></div>
+
+                            <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px;">
+                                <h3 style="margin-top: 0; color: var(--text-primary); font-size: 0.95rem;">Add New Passport</h3>
+                                <div class="filter-group">
+                                    <label>Country</label>
+                                    <input type="text" id="new-passport-country" placeholder="e.g., Australia, United States" />
+                                </div>
+                                <div class="filter-group">
+                                    <label>Passport Number</label>
+                                    <input type="text" id="new-passport-number" placeholder="e.g., N1234567" />
+                                </div>
+                                <div class="filter-group">
+                                    <label>Expiry Date</label>
+                                    <input type="date" id="new-passport-expiry" />
+                                </div>
+                                <button class="location-link-btn" onclick="addPassport()" style="width: 100%; margin-top: 0.5rem;">
+                                    Add Passport
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="detail-section" style="margin-top: 2rem;">
+                            <h2>Interests</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Add your travel interests to help filter and discover destinations that match your preferences.</p>
+
+                            <div id="interests-list"></div>
+
+                            <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px;">
+                                <h3 style="margin-top: 0; color: var(--text-primary); font-size: 0.95rem;">Add New Interest</h3>
+                                <div style="display: flex; gap: 0.75rem;">
+                                    <input type="text" id="new-interest-input" placeholder="e.g., Architecture, Coffee, Local Cuisine, Adventure Sports" style="flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" onkeypress="if(event.key==='Enter') addInterest()" />
+                                    <button class="location-link-btn" onclick="addInterest()" style="white-space: nowrap;">
+                                        Add Interest
+                                    </button>
+                                </div>
+                                <div class="filter-hint">Press Enter or click Add Interest</div>
+                            </div>
+                        </div>
+
+                        <div class="detail-section" style="margin-top: 2rem;">
+                            <h2>Languages Spoken</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Add the languages you speak to help you find destinations where you can communicate easily.</p>
+
+                            <div id="user-languages-list"></div>
+
+                            <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px;">
+                                <h3 style="margin-top: 0; color: var(--text-primary); font-size: 0.95rem;">Add Language</h3>
+                                <div style="display: flex; gap: 0.75rem;">
+                                    <input type="text" id="new-language-input" placeholder="e.g., English, Spanish, Mandarin Chinese" style="flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" onkeypress="if(event.key==='Enter') addUserLanguage()" />
+                                    <button class="location-link-btn" onclick="addUserLanguage()" style="white-space: nowrap;">
+                                        Add Language
+                                    </button>
+                                </div>
+                                <div class="filter-hint">Press Enter or click Add Language</div>
+                            </div>
+                        </div>
+
+                        <div class="detail-section" style="margin-top: 2rem;">
+                            <h2>Annual Budget</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Set your annual travel budget to help track spending and identify destinations within your means.</p>
+                            <div class="filter-group">
+                                <label>Annual Budget (AUD)</label>
+                                <input type="number" id="annual-budget-input" placeholder="e.g., 50000" min="0" step="1000" style="padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" oninput="updateBudgetDisplay()" />
+                                <div class="filter-hint">Your total travel budget for the year in Australian Dollars</div>
+                            </div>
+
+                            <div id="budget-breakdown" style="margin-top: 1.5rem; padding: 1rem; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 6px; display: none;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                                    <h3 style="margin: 0; color: var(--text-primary); font-size: 0.95rem;">Budget Breakdown</h3>
+                                    <button onclick="toggleBudgetView()" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--accent-color); padding: 0.4rem 0.75rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;" id="budget-toggle-btn">
+                                        Show Weekly
+                                    </button>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 0.75rem; background: var(--card-bg); border-radius: 6px;">
+                                    <span style="color: var(--text-secondary);" id="budget-period-label">Monthly Budget:</span>
+                                    <span style="color: var(--text-primary); font-weight: 600;" id="budget-amount">A$4,167</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="location-link-btn" onclick="saveSettings()" style="margin-top: 2rem; width: 100%;">
+                            Save All Configuration
+                        </button>
+                        <div id="config-message" style="margin-top: 1rem; padding: 0.75rem; border-radius: 6px; display: none;"></div>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <script src="app.js?v=13"></script>
+    <script src="app.js?v=28"></script>
 </body>
 </html>

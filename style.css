@@ -112,8 +112,57 @@ body {
     letter-spacing: 1px;
 }
 
+.filter-category {
+    margin-bottom: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.filter-category-header {
+    padding: 0.75rem;
+    background: rgba(100, 116, 139, 0.1);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    transition: background 0.2s;
+}
+
+.filter-category-header:hover {
+    background: rgba(100, 116, 139, 0.15);
+}
+
+.filter-category-header .toggle-icon {
+    font-size: 0.7rem;
+    transition: transform 0.2s;
+}
+
+.filter-category-header.collapsed .toggle-icon {
+    transform: rotate(-90deg);
+}
+
+.filter-category-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    padding: 0 0.75rem;
+}
+
+.filter-category-content.active {
+    max-height: 1000px;
+    padding: 0.75rem;
+}
+
 .filter-group {
     margin-bottom: 1rem;
+}
+
+.filter-group:last-child {
+    margin-bottom: 0;
 }
 
 .filter-group label {
@@ -263,6 +312,7 @@ header {
 .scrollable-content {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     scrollbar-width: thin;
     scrollbar-color: var(--border-color) transparent;
 }
@@ -426,6 +476,8 @@ header {
     margin-bottom: 1rem;
     padding: 1rem;
     border-radius: 0 8px 8px 0;
+    max-width: 100%;
+    word-wrap: break-word;
 }
 
 .timeline-header {
