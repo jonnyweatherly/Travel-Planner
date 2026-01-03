@@ -58,6 +58,16 @@
                     </button>
                 </div>
 
+                <!-- Favorites Filter -->
+                <div class="filter-group"
+                    style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.3); border-radius: 8px;">
+                    <label style="display: flex; align-items: center; cursor: pointer; margin: 0;">
+                        <input type="checkbox" id="favorites-filter" onchange="toggleFavoritesFilter()"
+                            style="margin-right: 0.5rem; width: 18px; height: 18px; cursor: pointer;">
+                        <span style="color: #f59e0b; font-weight: 600;">★ Show Favorites Only</span>
+                    </label>
+                </div>
+
                 <!-- Location Filters -->
                 <div class="filter-category">
                     <div class="filter-category-header" onclick="toggleFilterCategory(this)">
@@ -74,6 +84,9 @@
                         </div>
                         <div class="filter-group">
                             <label>Countries</label>
+                            <input type="text" id="country-search" placeholder="Search countries..."
+                                oninput="filterSelectOptions('country-filter', 'country-search')"
+                                style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); font-size: 0.9rem;" />
                             <select id="country-filter" multiple size="5" onchange="renderCurrentView()">
                                 <!-- Populated by JS -->
                             </select>
@@ -105,6 +118,9 @@
                         </div>
                         <div class="filter-group">
                             <label>Languages</label>
+                            <input type="text" id="language-search" placeholder="Search languages..."
+                                oninput="filterSelectOptions('language-filter', 'language-search')"
+                                style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); font-size: 0.9rem;" />
                             <select id="language-filter" multiple size="5" onchange="renderCurrentView()">
                                 <!-- Populated by JS -->
                             </select>
@@ -112,6 +128,9 @@
                         </div>
                         <div class="filter-group">
                             <label>Interests</label>
+                            <input type="text" id="interests-search" placeholder="Search interests..."
+                                oninput="filterSelectOptions('interests-filter', 'interests-search')"
+                                style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); font-size: 0.9rem;" />
                             <select id="interests-filter" multiple size="5" onchange="renderCurrentView()">
                                 <!-- Populated by JS -->
                             </select>
@@ -178,29 +197,29 @@
                 </div>
             </header>
 
-            <!-- AI-Powered Smart Search Bar -->
-            <div style="padding: 0rem;">
-                <div class="search-bar" style="position: relative; width: 90%;">
-                    <input type="text" id="search-input"
-                        placeholder="🤖 AI-Powered Search - Try: 'Affordable wakeboarding destinations in Asia that speak English'"
-                        onkeyup="handleSmartSearch(event)" style="padding-right: 10rem;">
-                    <button onclick="processAIQuery()" id="ai-search-btn"
-                        style="position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid rgba(147, 51, 234, 0.3); background: rgba(147, 51, 234, 0.1); color: #9333ea; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
-                        🤖 AI Search
-                    </button>
-                    <button onclick="clearAllFilters()"
-                        style="position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-secondary); cursor: pointer; font-size: 0.85rem;">
-                        Clear
-                    </button>
-                </div>
-
-                <div id="smart-query-feedback"
-                    style="margin-top: 0.5rem; padding: 0.5rem; border-radius: 6px; display: none; font-size: 0.9rem; width: 66%;">
-                </div>
-            </div>
-
             <!-- Views -->
             <div id="view-locations" class="view-section active">
+                <!-- AI-Powered Smart Search Bar -->
+                <div style="padding: 0rem;">
+                    <div class="search-bar" style="position: relative; width: 90%;">
+                        <input type="text" id="search-input"
+                            placeholder="🤖 AI-Powered Search - Try: 'Affordable wakeboarding destinations in Asia that speak English'"
+                            onkeyup="handleSmartSearch(event)" style="padding-right: 10rem;">
+                        <button onclick="processAIQuery()" id="ai-search-btn"
+                            style="position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid rgba(147, 51, 234, 0.3); background: rgba(147, 51, 234, 0.1); color: #9333ea; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+                            🤖 AI Search
+                        </button>
+                        <button onclick="clearAllFilters()"
+                            style="position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-secondary); cursor: pointer; font-size: 0.85rem;">
+                            Clear
+                        </button>
+                    </div>
+
+                    <div id="smart-query-feedback"
+                        style="margin-top: 0.5rem; padding: 0.5rem; border-radius: 6px; display: none; font-size: 0.9rem; width: 66%;">
+                    </div>
+                </div>
+
                 <div class="fixed-controls">
                     <div class="controls-row">
                         <div class="month-controls">
@@ -498,13 +517,13 @@
                                     style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
                                     <div>
                                         <label style="font-size: 0.85rem; color: var(--text-secondary);">Start
-                                            Date</label>
+                                            Date <span style="color: var(--text-muted);">(Optional)</span></label>
                                         <input type="date" id="budget-start-date"
                                             style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
                                     </div>
                                     <div>
                                         <label style="font-size: 0.85rem; color: var(--text-secondary);">End
-                                            Date</label>
+                                            Date <span style="color: var(--text-muted);">(Optional)</span></label>
                                         <input type="date" id="budget-end-date"
                                             style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
                                     </div>
@@ -516,6 +535,8 @@
                                             style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
                                     </div>
                                 </div>
+                                <div class="filter-hint" style="margin-bottom: 0.75rem;">Leave dates blank for a general
+                                    budget without specific timeframes</div>
                                 <button class="location-link-btn" onclick="addBudgetPeriod()"
                                     style="width: 100%; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e;">
                                     Add Budget Period
@@ -524,11 +545,20 @@
                         </div>
 
                         <div class="detail-section" style="margin-top: 2rem;">
-                            <h2>Travel Budget</h2>
+                            <h2>Transport Budget</h2>
                             <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Set aside a separate budget
                                 for flights, trains, and other transportation costs.</p>
                             <div class="filter-group">
-                                <label>Annual Travel Budget</label>
+                                <label>Budget Period</label>
+                                <select id="transport-budget-period"
+                                    style="padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); margin-bottom: 1rem;">
+                                    <option value="weekly">Per Week</option>
+                                    <option value="monthly">Per Month</option>
+                                    <option value="yearly" selected>Per Year</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label id="transport-budget-label">Annual Transport Budget</label>
                                 <input type="number" id="travel-budget-input" placeholder="e.g., 15000" min="0"
                                     step="1000"
                                     style="padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
@@ -558,6 +588,22 @@
                 <div class="scrollable-content">
                     <div style="max-width: 600px; margin: 0 auto; padding: 2rem;">
                         <div class="detail-section">
+                            <h2>Unit Preference</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Choose your preferred
+                                measurement system for distances and temperatures.</p>
+                            <div class="filter-group">
+                                <label>Unit System</label>
+                                <select id="unit-system-select"
+                                    style="padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);">
+                                    <option value="metric">Metric (km, °C)</option>
+                                    <option value="imperial">Imperial (miles, °F)</option>
+                                </select>
+                                <div class="filter-hint">This affects how distances and temperatures are displayed
+                                    throughout the app</div>
+                            </div>
+                        </div>
+
+                        <div class="detail-section" style="margin-top: 2rem;">
                             <h2>Home Airport</h2>
                             <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Set your home airport for
                                 future flight cost estimates.</p>
@@ -647,6 +693,32 @@
                                     </button>
                                 </div>
                                 <div class="filter-hint">Press Enter or click Add Language</div>
+                            </div>
+                        </div>
+
+                        <div class="detail-section" style="margin-top: 2rem;">
+                            <h2>Current Medications</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">List any medications you're
+                                currently taking to check country-specific restrictions</p>
+
+                            <div id="medications-list"></div>
+
+                            <div
+                                style="margin-top: 1.5rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px;">
+                                <h3 style="margin-top: 0; color: var(--text-primary); font-size: 0.95rem;">Add
+                                    Medication
+                                </h3>
+                                <div style="display: flex; gap: 0.75rem;">
+                                    <input type="text" id="new-medication-input"
+                                        placeholder="e.g., Aspirin, Ibuprofen, Insulin"
+                                        style="flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);"
+                                        onkeypress="if(event.key==='Enter') addMedication()" />
+                                    <button class="location-link-btn" onclick="addMedication()"
+                                        style="white-space: nowrap;">
+                                        Add Medication
+                                    </button>
+                                </div>
+                                <div class="filter-hint">Press Enter or click Add Medication</div>
                             </div>
                         </div>
 

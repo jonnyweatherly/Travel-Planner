@@ -9,3 +9,5 @@ Include an example I can use to test the script at the top of the file
 Include a list of all parameters and references to any sample data if present, near the top of the script, below the example
 
 When creating html files, add them to the gitignore file
+
+Always refer to API keys via .env

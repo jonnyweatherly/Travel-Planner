@@ -323,9 +323,56 @@ function renderLocationDetail(location, seasonByMonth, trips) {
                 </div>
             </div>
 
+            <div id="medicine-rules-section" class="detail-section full-width">
+                <h2>💊 Medication Rules for ${country}</h2>
+                <div style="padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px;">
+                    <p style="margin: 0 0 1rem 0; color: var(--text-secondary);">
+                        ${getMedicineRulesMessage(country)}
+                    </p>
+                    ${renderUserMedicationsCheck(country)}
+                </div>
+            </div>
+
             ${tripsHTML ? `<div id="trips-section" class="detail-section full-width">${tripsHTML}</div>` : ''}
         </div>
     `;
+}
+
+function getMedicineRulesMessage(country) {
+    // Placeholder function - in a real app, this would fetch from an API or database
+    // For now, we'll provide general guidance
+    return `Always check the latest medication import rules for ${country} before traveling. Requirements can change frequently. Consult your embassy or official government health websites for current regulations.`;
+}
+
+function renderUserMedicationsCheck(country) {
+    const medications = getUserMedications();
+
+    if (medications.length === 0) {
+        return `<p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">
+            💡 <strong>Tip:</strong> Add your current medications in <a href="index.html#config" style="color: var(--accent-color);">Configuration</a> to get personalized medication restriction alerts for this country.
+        </p>`;
+    }
+
+    return `
+        <div style="margin-top: 1rem;">
+            <p style="font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary);">Your Medications:</p>
+            <ul style="margin: 0; padding-left: 1.5rem;">
+                ${medications.map(med => `
+                    <li style="margin-bottom: 0.5rem; color: var(--text-secondary);">
+                        ${med} <span style="color: #f59e0b;">⚠️ Check restrictions</span>
+                    </li>
+                `).join('')}
+            </ul>
+            <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+                <strong>Note:</strong> Specific medication restrictions database coming soon. Please verify each medication's legality in ${country} through official sources.
+            </p>
+        </div>
+    `;
+}
+
+function getUserMedications() {
+    const medicationsStr = localStorage.getItem('userMedications');
+    return medicationsStr ? JSON.parse(medicationsStr) : [];
 }
 
 // Load data when page loads

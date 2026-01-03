@@ -17,9 +17,62 @@ const STATE = {
         minWeeklyCost: null,
         maxWeeklyCost: null,
         minFoodCost: null,
-        maxFoodCost: null
+        maxFoodCost: null,
+        favoritesOnly: false
     }
 };
+
+// Favorites management
+function getFavoriteLocations() {
+    const favoritesStr = localStorage.getItem('favoriteLocations');
+    return favoritesStr ? JSON.parse(favoritesStr) : [];
+}
+
+function saveFavoriteLocations(favorites) {
+    localStorage.setItem('favoriteLocations', JSON.stringify(favorites));
+}
+
+function toggleFavorite(locationName) {
+    const favorites = getFavoriteLocations();
+    const index = favorites.indexOf(locationName);
+
+    if (index > -1) {
+        favorites.splice(index, 1);
+    } else {
+        favorites.push(locationName);
+    }
+
+    saveFavoriteLocations(favorites);
+    renderLocations();
+}
+
+function isFavorite(locationName) {
+    return getFavoriteLocations().includes(locationName);
+}
+
+function toggleFavoritesFilter() {
+    const checkbox = document.getElementById('favorites-filter');
+    STATE.filters.favoritesOnly = checkbox ? checkbox.checked : false;
+    renderCurrentView();
+}
+
+// Fuzzy search for filter select boxes
+function filterSelectOptions(selectId, searchInputId) {
+    const select = document.getElementById(selectId);
+    const searchInput = document.getElementById(searchInputId);
+
+    if (!select || !searchInput) return;
+
+    const searchTerm = searchInput.value.toLowerCase();
+    const options = Array.from(select.options);
+
+    options.forEach(option => {
+        const optionText = option.textContent.toLowerCase();
+        // Simple fuzzy match: show if search term is contained in option text
+        const matches = optionText.includes(searchTerm);
+        option.style.display = matches ? '' : 'none';
+    });
+}
 
 // Config mapping for column names based on observed data
 const COL_MAP = {
@@ -462,6 +515,9 @@ function applyLocationFilters(items, locationField = COL_MAP.loc.name, countryFi
         const schengen = item[schengenField];
         const tags = item[tagsField] || '';
 
+        // Favorites filter
+        if (STATE.filters.favoritesOnly && !isFavorite(location)) return false;
+
         // Text/Category filters
         if (STATE.filters.sport !== 'all' && sport !== STATE.filters.sport) return false;
         if (STATE.filters.region !== 'all' && continent !== STATE.filters.region) return false;
@@ -774,10 +830,20 @@ function renderLocations() {
             window.location.href = `location.html?name=${encodeURIComponent(name)}`;
         };
 
+        const favoriteIcon = isFavorite(name) ? '⭐' : '☆';
+        const favoriteColor = isFavorite(name) ? '#f59e0b' : '#6b7280';
+
         card.innerHTML = `
             <div class="card-header">
                 <div>
-                    <div class="card-title">${name}</div>
+                    <div class="card-title">
+                        ${name}
+                        <button onclick="event.stopPropagation(); toggleFavorite('${name.replace(/'/g, "\\'")}')"
+                            style="background: none; border: none; cursor: pointer; font-size: 1.2rem; margin-left: 0.5rem; color: ${favoriteColor}; padding: 0; line-height: 1;"
+                            title="${isFavorite(name) ? 'Remove from favorites' : 'Add to favorites'}">
+                            ${favoriteIcon}
+                        </button>
+                    </div>
                     <div class="card-subtitle">${country}</div>
                 </div>
                 ${weeklyCostDisplay ? `<div class="card-cost" style="${costColor}">${weeklyCostDisplay}/wk</div>` : ''}
@@ -1211,10 +1277,13 @@ function switchView(viewName) {
 // Configuration functions
 function loadConfig() {
     const homeAirport = localStorage.getItem('homeAirport') || '';
-    const input = document.getElementById('home-airport-input');
-    if (input) {
-        input.value = homeAirport;
-    }
+    const unitSystem = localStorage.getItem('unitSystem') || 'metric';
+
+    const homeAirportInput = document.getElementById('home-airport-input');
+    const unitSystemSelect = document.getElementById('unit-system-select');
+
+    if (homeAirportInput) homeAirportInput.value = homeAirport;
+    if (unitSystemSelect) unitSystemSelect.value = unitSystem;
 
     // Load annual budget
     const annualBudget = localStorage.getItem('annualBudget') || '';
@@ -1224,8 +1293,11 @@ function loadConfig() {
         updateBudgetDisplay();
     }
 
-    // Load passports
+    // Load passports and other lists
     renderPassportList();
+    renderUserInterestsList();
+    renderUserLanguagesList();
+    renderMedicationsList();
 
     // Load interests
     renderInterestsList();
@@ -1515,14 +1587,82 @@ function removeUserLanguage(index) {
     showMessage('Language removed', 'success');
 }
 
+// Medications functions
+function getUserMedications() {
+    const medicationsStr = localStorage.getItem('userMedications');
+    return medicationsStr ? JSON.parse(medicationsStr) : [];
+}
+
+function saveMedications(medications) {
+    localStorage.setItem('userMedications', JSON.stringify(medications));
+}
+
+function renderMedicationsList() {
+    const listDiv = document.getElementById('medications-list');
+    if (!listDiv) return;
+
+    const medications = getUserMedications();
+
+    if (medications.length === 0) {
+        listDiv.innerHTML = '<p style="color: var(--text-secondary); font-size: 0.9rem;">No medications added yet</p>';
+        return;
+    }
+
+    listDiv.innerHTML = medications.map((med, index) => `
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; margin-bottom: 0.5rem; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px;">
+            <span style="color: var(--text-primary);">${med}</span>
+            <button onclick="removeMedication(${index})" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 0.4rem 0.75rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
+                Remove
+            </button>
+        </div>
+    `).join('');
+}
+
+function addMedication() {
+    const input = document.getElementById('new-medication-input');
+    if (!input) return;
+
+    const medication = input.value.trim();
+    if (!medication) {
+        showMessage('Please enter a medication name', 'warning');
+        return;
+    }
+
+    const medications = getUserMedications();
+    if (medications.includes(medication)) {
+        showMessage('This medication is already in your list', 'warning');
+        return;
+    }
+
+    medications.push(medication);
+    saveMedications(medications);
+    renderMedicationsList();
+    input.value = '';
+    showMessage('Medication added', 'success');
+}
+
+function removeMedication(index) {
+    const medications = getUserMedications();
+    medications.splice(index, 1);
+    saveMedications(medications);
+    renderMedicationsList();
+    showMessage('Medication removed', 'success');
+}
+
 function saveSettings() {
     const input = document.getElementById('home-airport-input');
     const budgetInput = document.getElementById('annual-budget-input');
+    const unitSystemSelect = document.getElementById('unit-system-select');
     const messageDiv = document.getElementById('config-message');
 
     if (!input || !messageDiv) return;
 
     const airportCode = input.value.trim().toUpperCase();
+
+    // Save unit system preference
+    if (unitSystemSelect) {
+        localStorage.setItem('unitSystem', unitSystemSelect.value);
+    }
 
     // Basic validation - 3 letters
     if (airportCode.length === 0) {
@@ -1657,12 +1797,24 @@ function renderBudgetPeriodsList() {
         return;
     }
 
-    listDiv.innerHTML = periods.map((period, index) => `
+    listDiv.innerHTML = periods.map((period, index) => {
+        let dateDisplay;
+        if (period.startDate && period.endDate) {
+            dateDisplay = `${new Date(period.startDate).toLocaleDateString()} - ${new Date(period.endDate).toLocaleDateString()}`;
+        } else if (period.startDate) {
+            dateDisplay = `From ${new Date(period.startDate).toLocaleDateString()}`;
+        } else if (period.endDate) {
+            dateDisplay = `Until ${new Date(period.endDate).toLocaleDateString()}`;
+        } else {
+            dateDisplay = 'General Budget (No specific dates)';
+        }
+
+        return `
         <div style="padding: 1rem; margin-bottom: 0.75rem; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.25rem;">
-                        ${new Date(period.startDate).toLocaleDateString()} - ${new Date(period.endDate).toLocaleDateString()}
+                        ${dateDisplay}
                     </div>
                     <div style="color: var(--text-secondary); font-size: 0.9rem;">
                         Annual Budget: ${period.currency || 'AUD'}$${formatWithCommas(period.amount)}
@@ -1673,7 +1825,8 @@ function renderBudgetPeriodsList() {
                 </button>
             </div>
         </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 function addBudgetPeriod() {
@@ -1684,18 +1837,26 @@ function addBudgetPeriod() {
 
     if (!startDateInput || !endDateInput || !amountInput) return;
 
-    const startDate = startDateInput.value;
-    const endDate = endDateInput.value;
+    const startDate = startDateInput.value || null;
+    const endDate = endDateInput.value || null;
     const amount = parseFloat(amountInput.value);
 
-    if (!startDate || !endDate || !amount || amount <= 0) {
-        alert('Please fill in all budget period fields');
+    if (!amount || amount <= 0) {
+        alert('Please enter a valid budget amount');
         return;
     }
 
-    if (new Date(startDate) >= new Date(endDate)) {
+    // Only validate date logic if both dates are provided
+    if (startDate && endDate && new Date(startDate) >= new Date(endDate)) {
         alert('End date must be after start date');
         return;
+    }
+
+    // Warn if only one date is provided
+    if ((startDate && !endDate) || (!startDate && endDate)) {
+        if (!confirm('You have only provided one date. The budget period will be created without a complete date range. Continue?')) {
+            return;
+        }
     }
 
     const periods = getBudgetPeriods();
@@ -1706,8 +1867,13 @@ function addBudgetPeriod() {
         currency: currencySelect ? currencySelect.value : 'AUD'
     });
 
-    // Sort periods by start date
-    periods.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+    // Sort periods by start date (put entries without dates at the end)
+    periods.sort((a, b) => {
+        if (!a.startDate && !b.startDate) return 0;
+        if (!a.startDate) return 1;
+        if (!b.startDate) return -1;
+        return new Date(a.startDate) - new Date(b.startDate);
+    });
 
     saveBudgetPeriods(periods);
 
@@ -1746,25 +1912,58 @@ function getCurrentBudgetPeriod(date = new Date()) {
 function loadFinances() {
     const mainCurrency = localStorage.getItem('mainCurrency') || 'AUD';
     const travelBudget = localStorage.getItem('travelBudget') || '';
+    const transportBudgetPeriod = localStorage.getItem('transportBudgetPeriod') || 'yearly';
 
     const currencySelect = document.getElementById('main-currency-select');
     const travelBudgetInput = document.getElementById('travel-budget-input');
+    const transportBudgetPeriodSelect = document.getElementById('transport-budget-period');
 
     if (currencySelect) currencySelect.value = mainCurrency;
     if (travelBudgetInput) travelBudgetInput.value = travelBudget;
+    if (transportBudgetPeriodSelect) {
+        transportBudgetPeriodSelect.value = transportBudgetPeriod;
+        updateTransportBudgetLabel(transportBudgetPeriod);
+
+        // Add event listener for period changes
+        transportBudgetPeriodSelect.addEventListener('change', function() {
+            updateTransportBudgetLabel(this.value);
+        });
+    }
 
     renderBudgetPeriodsList();
+}
+
+function updateTransportBudgetLabel(period) {
+    const label = document.getElementById('transport-budget-label');
+    if (!label) return;
+
+    switch(period) {
+        case 'weekly':
+            label.textContent = 'Weekly Transport Budget';
+            break;
+        case 'monthly':
+            label.textContent = 'Monthly Transport Budget';
+            break;
+        case 'yearly':
+            label.textContent = 'Annual Transport Budget';
+            break;
+        default:
+            label.textContent = 'Annual Transport Budget';
+    }
 }
 
 function saveFinances() {
     const currencySelect = document.getElementById('main-currency-select');
     const travelBudgetInput = document.getElementById('travel-budget-input');
+    const transportBudgetPeriodSelect = document.getElementById('transport-budget-period');
 
     const mainCurrency = currencySelect ? currencySelect.value : 'AUD';
     const travelBudget = travelBudgetInput ? travelBudgetInput.value : '';
+    const transportBudgetPeriod = transportBudgetPeriodSelect ? transportBudgetPeriodSelect.value : 'yearly';
 
     localStorage.setItem('mainCurrency', mainCurrency);
     localStorage.setItem('travelBudget', travelBudget);
+    localStorage.setItem('transportBudgetPeriod', transportBudgetPeriod);
 
     const messageDiv = document.getElementById('finances-message');
     if (messageDiv) {
@@ -2405,12 +2604,23 @@ async function processAIQuery() {
             annualBudget: localStorage.getItem('annualBudget') || 'Not set'
         };
 
-        // Call Anthropic API
+        // SECURITY WARNING: API keys should NEVER be in client-side code
+        // This AI search feature requires a backend server or serverless function
+        // For production, implement a server endpoint that proxies requests to Anthropic API
+        // The .env file cannot be accessed from client-side JavaScript
+
+        // TODO: Replace with backend API call
+        // Example: const response = await fetch('/api/ai-search', { ... })
+
+        console.error('AI Search disabled: API key must be moved to backend server for security');
+        throw new Error('AI Search requires backend implementation for security. API keys cannot be exposed in client-side code.');
+
+        /* REMOVED FOR SECURITY - This code must be moved to a backend server
         const response = await fetch('https://api.anthropic.com/v1/messages', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'x-api-key': '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',
+                'x-api-key': 'REMOVED_FOR_SECURITY',
                 'anthropic-version': '2023-06-01'
             },
             body: JSON.stringify({
@@ -2480,6 +2690,7 @@ Rules:
             <div style="margin-bottom: 0.5rem;"><strong>🤖 AI Interpretation:</strong> ${filters.explanation}</div>
             <div style="font-size: 0.85rem; color: var(--text-secondary);">Filters have been applied. Results updated below.</div>
         `;
+        */ // END OF REMOVED CODE BLOCK
 
     } catch (error) {
         console.error('AI Query Error:', error);
@@ -2743,7 +2954,8 @@ function clearAllFilters() {
         minWeeklyCost: null,
         maxWeeklyCost: null,
         minFoodCost: null,
-        maxFoodCost: null
+        maxFoodCost: null,
+        favoritesOnly: false
     };
 
     // Reset UI elements
@@ -2755,6 +2967,8 @@ function clearAllFilters() {
     document.getElementById('min-weekly-cost').value = '';
     document.getElementById('max-weekly-cost').value = '';
     document.getElementById('min-food-cost').value = '';
+    const favCheckbox = document.getElementById('favorites-filter');
+    if (favCheckbox) favCheckbox.checked = false;
     document.getElementById('max-food-cost').value = '';
 
     const countrySelect = document.getElementById('country-filter');
