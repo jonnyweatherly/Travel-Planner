@@ -2351,26 +2351,219 @@ function handleSmartSearch(event) {
 
     if (!input || !feedback) return;
 
-    const query = input.value.trim().toLowerCase();
+    const query = input.value.trim();
 
-    // Detect if this is a natural language query vs simple search
-    const naturalLanguageKeywords = [
-        'good', 'best', 'cheap', 'budget', 'expensive', 'luxury', 'affordable',
-        'for', 'with', 'that', 'speak', 'speaks', 'speaking',
-        'winter', 'summer', 'spring', 'autumn', 'fall',
-        'wakeboarding', 'surfing', 'skiing', 'snowboarding', 'kitesurfing', 'diving', 'climbing'
-    ];
-
-    const isNaturalLanguage = naturalLanguageKeywords.some(keyword => query.includes(keyword)) && query.split(' ').length >= 3;
-
-    if (isNaturalLanguage && event.key === 'Enter') {
-        // Process as natural language query
-        processSmartQuery();
-    } else if (!isNaturalLanguage) {
-        // Process as traditional search
-        renderCurrentView();
-        feedback.style.display = 'none';
+    // Trigger AI search on Enter key
+    if (event.key === 'Enter' && query) {
+        processAIQuery();
+        return;
     }
+
+    // For simple typing, just do basic text search
+    if (!query) {
+        feedback.style.display = 'none';
+        renderCurrentView();
+    }
+}
+
+async function processAIQuery() {
+    const input = document.getElementById('search-input');
+    const feedback = document.getElementById('smart-query-feedback');
+    const aiButton = document.getElementById('ai-search-btn');
+
+    if (!input || !feedback) return;
+
+    const query = input.value.trim();
+
+    if (!query) {
+        feedback.style.display = 'none';
+        return;
+    }
+
+    // Show loading state
+    const originalButtonText = aiButton ? aiButton.innerHTML : '';
+    if (aiButton) aiButton.innerHTML = '⏳ Thinking...';
+
+    feedback.style.display = 'block';
+    feedback.style.background = 'rgba(59, 130, 246, 0.1)';
+    feedback.style.border = '1px solid rgba(59, 130, 246, 0.3)';
+    feedback.style.color = 'var(--text-primary)';
+    feedback.innerHTML = '<div style="display: flex; align-items: center; gap: 0.5rem;"><div style="width: 16px; height: 16px; border: 2px solid var(--accent-color); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div><span>AI is analyzing your query...</span></div>';
+
+    try {
+        // Get available data context for AI
+        const availableSports = ['Wakeboarding', 'Surfing', 'Skiing', 'Snowboarding', 'Kitesurfing', 'Diving', 'Climbing'];
+        const availableRegions = ['Asia', 'Europe', 'Oceania', 'North America', 'South America', 'Africa'];
+        const availableLanguages = ['English', 'Spanish', 'French', 'Portuguese', 'German', 'Italian', 'Mandarin Chinese', 'Japanese', 'Thai', 'Arabic'];
+        const availableSeasons = ['Summer', 'Winter', 'Spring', 'Autumn'];
+
+        const userPreferences = {
+            homeAirport: localStorage.getItem('homeAirport') || 'Not set',
+            passports: JSON.parse(localStorage.getItem('passports') || '[]'),
+            interests: JSON.parse(localStorage.getItem('userInterests') || '[]'),
+            languages: JSON.parse(localStorage.getItem('userLanguages') || '[]'),
+            annualBudget: localStorage.getItem('annualBudget') || 'Not set'
+        };
+
+        // Call Anthropic API
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': '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',
+                'anthropic-version': '2023-06-01'
+            },
+            body: JSON.stringify({
+                model: 'claude-3-5-sonnet-20241022',
+                max_tokens: 1024,
+                messages: [{
+                    role: 'user',
+                    content: `You are a travel destination search assistant. A user is searching for travel destinations with this query: "${query}"
+
+Available filter options:
+- Sports: ${availableSports.join(', ')}
+- Regions: ${availableRegions.join(', ')}
+- Languages: ${availableLanguages.join(', ')}
+- Seasons: ${availableSeasons.join(', ')}
+
+User preferences:
+- Home Airport: ${userPreferences.homeAirport}
+- Passports: ${userPreferences.passports.join(', ') || 'None set'}
+- Interests: ${userPreferences.interests.join(', ') || 'None set'}
+- Languages Spoken: ${userPreferences.languages.join(', ') || 'None set'}
+- Annual Budget: ${userPreferences.annualBudget}
+
+Analyze the query and respond with ONLY a JSON object (no other text) with these fields:
+{
+  "sport": "Sport name or null",
+  "region": "Region name or null",
+  "languages": ["Array of language names or empty array"],
+  "season": "Season name or null",
+  "costLevel": "cheap/affordable/moderate/expensive or null",
+  "maxWeeklyCost": number or null,
+  "explanation": "Brief explanation of how you interpreted the query"
+}
+
+Rules:
+- Use exact names from the available options
+- For cost terms like "cheap", "affordable", "budget": set maxWeeklyCost to appropriate AUD value (cheap: 300, affordable: 500, moderate: 800, expensive: null)
+- If specific cost mentioned (e.g., "under $500/week"), use that number
+- Return null for fields that aren't mentioned in the query`
+                }]
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const aiResponse = data.content[0].text;
+
+        // Parse AI response
+        let filters;
+        try {
+            filters = JSON.parse(aiResponse);
+        } catch (e) {
+            console.error('Failed to parse AI response:', aiResponse);
+            throw new Error('AI returned invalid response format');
+        }
+
+        // Apply filters based on AI interpretation
+        applyAIFilters(filters);
+
+        // Show success feedback
+        feedback.style.background = 'rgba(34, 197, 94, 0.1)';
+        feedback.style.border = '1px solid rgba(34, 197, 94, 0.3)';
+        feedback.style.color = '#22c55e';
+        feedback.innerHTML = `
+            <div style="margin-bottom: 0.5rem;"><strong>🤖 AI Interpretation:</strong> ${filters.explanation}</div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">Filters have been applied. Results updated below.</div>
+        `;
+
+    } catch (error) {
+        console.error('AI Query Error:', error);
+
+        // Fallback to basic keyword search
+        feedback.style.background = 'rgba(251, 146, 60, 0.1)';
+        feedback.style.border = '1px solid rgba(251, 146, 60, 0.3)';
+        feedback.style.color = '#fb923c';
+        feedback.innerHTML = `
+            <div><strong>⚠️ AI search unavailable</strong></div>
+            <div style="font-size: 0.85rem; margin-top: 0.25rem;">Falling back to basic keyword search. Try again or contact support if the issue persists.</div>
+        `;
+
+        // Use the existing basic search as fallback
+        processSmartQuery();
+    } finally {
+        // Restore button state
+        if (aiButton) aiButton.innerHTML = originalButtonText;
+    }
+}
+
+function applyAIFilters(filters) {
+    // Reset filters
+    STATE.filters = {
+        sport: 'all',
+        region: 'all',
+        countries: [],
+        season: 'all',
+        visaRegion: 'all',
+        languages: [],
+        interests: [],
+        search: '',
+        minWeeklyCost: null,
+        maxWeeklyCost: null,
+        minFoodCost: null,
+        maxFoodCost: null
+    };
+
+    let filtersApplied = [];
+
+    // Apply sport filter
+    if (filters.sport) {
+        STATE.filters.sport = filters.sport;
+        const sportFilter = document.getElementById('sport-filter');
+        if (sportFilter) sportFilter.value = filters.sport;
+        filtersApplied.push(`Sport: ${filters.sport}`);
+    }
+
+    // Apply region filter
+    if (filters.region) {
+        STATE.filters.region = filters.region;
+        const regionFilter = document.getElementById('region-filter');
+        if (regionFilter) regionFilter.value = filters.region;
+        filtersApplied.push(`Region: ${filters.region}`);
+    }
+
+    // Apply language filters
+    if (filters.languages && filters.languages.length > 0) {
+        STATE.filters.languages = filters.languages;
+        const languageFilter = document.getElementById('language-filter');
+        if (languageFilter) {
+            Array.from(languageFilter.options).forEach(opt => {
+                opt.selected = filters.languages.includes(opt.value);
+            });
+        }
+        filtersApplied.push(`Languages: ${filters.languages.join(', ')}`);
+    }
+
+    // Apply season filter
+    if (filters.season) {
+        STATE.filters.season = filters.season;
+        const seasonFilter = document.getElementById('season-filter');
+        if (seasonFilter) seasonFilter.value = filters.season;
+        filtersApplied.push(`Season: ${filters.season}`);
+    }
+
+    // Apply cost filter
+    if (filters.maxWeeklyCost) {
+        STATE.filters.maxWeeklyCost = filters.maxWeeklyCost;
+        filtersApplied.push(`Max Cost: $${filters.maxWeeklyCost}/week`);
+    }
+
+    // Update UI and render
+    renderLocations();
 }
 
 function processSmartQuery() {

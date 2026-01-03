@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <!-- Top Navigation Bar -->
     <nav class="top-navbar">
@@ -48,7 +50,13 @@
         <!-- Left Sidebar (Filters Only) -->
         <aside class="filters-sidebar">
             <div class="filters-panel" id="filters-locations">
-                <h3>Filters</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="margin: 0;">Filters</h3>
+                    <button onclick="clearAllFilters()"
+                        style="padding: 0.5rem 0.75rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600;">
+                        🗑️ Clear All
+                    </button>
+                </div>
 
                 <!-- Location Filters -->
                 <div class="filter-category">
@@ -139,17 +147,21 @@
                         <div class="filter-group">
                             <label>Weekly Cost (AUD)</label>
                             <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                <input type="number" id="min-weekly-cost" placeholder="Min" style="width: 100%;" onchange="renderCurrentView()">
+                                <input type="number" id="min-weekly-cost" placeholder="Min" style="width: 100%;"
+                                    onchange="renderCurrentView()">
                                 <span>-</span>
-                                <input type="number" id="max-weekly-cost" placeholder="Max" style="width: 100%;" onchange="renderCurrentView()">
+                                <input type="number" id="max-weekly-cost" placeholder="Max" style="width: 100%;"
+                                    onchange="renderCurrentView()">
                             </div>
                         </div>
                         <div class="filter-group">
                             <label>Food Cost (AUD/day)</label>
                             <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                <input type="number" id="min-food-cost" placeholder="Min" style="width: 100%;" onchange="renderCurrentView()">
+                                <input type="number" id="min-food-cost" placeholder="Min" style="width: 100%;"
+                                    onchange="renderCurrentView()">
                                 <span>-</span>
-                                <input type="number" id="max-food-cost" placeholder="Max" style="width: 100%;" onchange="renderCurrentView()">
+                                <input type="number" id="max-food-cost" placeholder="Max" style="width: 100%;"
+                                    onchange="renderCurrentView()">
                             </div>
                         </div>
                     </div>
@@ -164,22 +176,28 @@
                     <h1 id="page-title">Explore Destinations</h1>
                     <p id="page-subtitle">Find your next adventure.</p>
                 </div>
-                <!-- Combined Smart Search Bar -->
-                <div style="position: relative; margin-bottom: 0.5rem;">
-                    <div class="search-bar" style="position: relative;">
-                        <input type="text" id="search-input" placeholder="Search cities, countries... or try: 'Cheap wakeboarding in Asia that speaks English'" onkeyup="handleSmartSearch(event)" style="padding-right: 5rem;">
-                        <button onclick="clearAllFilters()" style="position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-secondary); cursor: pointer; font-size: 0.85rem;">
-                            Clear
-                        </button>
-                    </div>
-                    <div id="smart-query-feedback" style="margin-top: 0.5rem; padding: 0.5rem; border-radius: 6px; display: none; font-size: 0.9rem;"></div>
-                </div>
-                <div style="margin-top: 1rem; display: flex; justify-content: flex-end;">
-                    <button onclick="clearAllFilters()" style="padding: 0.6rem 1.5rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; border-radius: 8px; cursor: pointer; font-size: 0.95rem; font-weight: 600; transition: all 0.2s;">
-                        🗑️ Clear All Filters
+            </header>
+
+            <!-- AI-Powered Smart Search Bar -->
+            <div style="padding: 0rem;">
+                <div class="search-bar" style="position: relative; width: 90%;">
+                    <input type="text" id="search-input"
+                        placeholder="🤖 AI-Powered Search - Try: 'Affordable wakeboarding destinations in Asia that speak English'"
+                        onkeyup="handleSmartSearch(event)" style="padding-right: 10rem;">
+                    <button onclick="processAIQuery()" id="ai-search-btn"
+                        style="position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid rgba(147, 51, 234, 0.3); background: rgba(147, 51, 234, 0.1); color: #9333ea; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+                        🤖 AI Search
+                    </button>
+                    <button onclick="clearAllFilters()"
+                        style="position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-secondary); cursor: pointer; font-size: 0.85rem;">
+                        Clear
                     </button>
                 </div>
-            </header>
+
+                <div id="smart-query-feedback"
+                    style="margin-top: 0.5rem; padding: 0.5rem; border-radius: 6px; display: none; font-size: 0.9rem; width: 66%;">
+                </div>
+            </div>
 
             <!-- Views -->
             <div id="view-locations" class="view-section active">
@@ -187,7 +205,8 @@
                     <div class="controls-row">
                         <div class="month-controls">
                             <div class="month-buttons">
-                                <button class="month-btn active" data-month="Jan" onclick="selectMonth('Jan')">Jan</button>
+                                <button class="month-btn active" data-month="Jan"
+                                    onclick="selectMonth('Jan')">Jan</button>
                                 <button class="month-btn" data-month="Feb" onclick="selectMonth('Feb')">Feb</button>
                                 <button class="month-btn" data-month="Mar" onclick="selectMonth('Mar')">Mar</button>
                                 <button class="month-btn" data-month="Apr" onclick="selectMonth('Apr')">Apr</button>
@@ -288,9 +307,11 @@
                     <div style="max-width: 800px; margin: 0 auto; padding: 2rem;">
                         <div class="detail-section">
                             <h2>Generate Report</h2>
-                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Select date range to analyze your travel costs and statistics.</p>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Select date range to analyze
+                                your travel costs and statistics.</p>
 
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                            <div
+                                style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
                                 <div class="filter-group">
                                     <label>Start Date</label>
                                     <input type="date" id="report-start-date" />
@@ -301,7 +322,8 @@
                                 </div>
                             </div>
 
-                            <button class="location-link-btn" onclick="generateReport()" style="width: 100%; margin-bottom: 2rem;">
+                            <button class="location-link-btn" onclick="generateReport()"
+                                style="width: 100%; margin-bottom: 2rem;">
                                 Generate Report
                             </button>
 
@@ -324,7 +346,10 @@
                         <div class="detail-section">
                             <h2>Add Task</h2>
                             <div style="display: flex; gap: 0.5rem; margin-bottom: 2rem;">
-                                <input type="text" id="todo-input" placeholder="E.g., Book flights, Renew passport, Get travel insurance..." style="flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" onkeypress="if(event.key==='Enter') addTodoItem()" />
+                                <input type="text" id="todo-input"
+                                    placeholder="E.g., Book flights, Renew passport, Get travel insurance..."
+                                    style="flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);"
+                                    onkeypress="if(event.key==='Enter') addTodoItem()" />
                                 <button class="location-link-btn" onclick="addTodoItem()" style="white-space: nowrap;">
                                     Add Task
                                 </button>
@@ -350,24 +375,35 @@
                         <div class="detail-section">
                             <h2>Add Item</h2>
                             <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
-                                <input type="text" id="packing-input" placeholder="E.g., Passport, Sunscreen, Laptop charger..." style="flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" onkeypress="if(event.key==='Enter') addPackingItem()" />
-                                <select id="packing-folder-select" style="padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); min-width: 150px;">
+                                <input type="text" id="packing-input"
+                                    placeholder="E.g., Passport, Sunscreen, Laptop charger..."
+                                    style="flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);"
+                                    onkeypress="if(event.key==='Enter') addPackingItem()" />
+                                <select id="packing-folder-select"
+                                    style="padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); min-width: 150px;">
                                     <option value="">No Bag</option>
                                 </select>
-                                <button class="location-link-btn" onclick="addPackingItem()" style="white-space: nowrap;">
+                                <button class="location-link-btn" onclick="addPackingItem()"
+                                    style="white-space: nowrap;">
                                     Add Item
                                 </button>
                             </div>
                             <div style="display: flex; gap: 0.5rem; margin-bottom: 2rem;">
-                                <input type="text" id="new-folder-input" placeholder="E.g., Backpack, Carry-on, Check-in..." style="flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" onkeypress="if(event.key==='Enter') addPackingFolder()" />
-                                <button class="location-link-btn" onclick="addPackingFolder()" style="white-space: nowrap; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e;">
+                                <input type="text" id="new-folder-input"
+                                    placeholder="E.g., Backpack, Carry-on, Check-in..."
+                                    style="flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);"
+                                    onkeypress="if(event.key==='Enter') addPackingFolder()" />
+                                <button class="location-link-btn" onclick="addPackingFolder()"
+                                    style="white-space: nowrap; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e;">
                                     Add Bag
                                 </button>
                             </div>
 
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                                 <h3 style="color: var(--text-primary); margin: 0;">Items</h3>
-                                <button onclick="clearPackedItems()" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
+                                <button onclick="clearPackedItems()"
+                                    style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
                                     Clear Packed Items
                                 </button>
                             </div>
@@ -383,23 +419,31 @@
                         <div class="info-section">
                             <h2 style="color: var(--text-primary); margin-bottom: 1.5rem;">Friends & Family</h2>
 
-                            <div style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px;">
+                            <div
+                                style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px;">
                                 <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Add Person</h3>
                                 <div style="display: grid; gap: 0.75rem;">
-                                    <input type="text" id="friend-name-input" placeholder="Name" style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
-                                    <input type="text" id="friend-location-input" placeholder="Current Location (e.g., Bali, Indonesia)" style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                    <input type="text" id="friend-name-input" placeholder="Name"
+                                        style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                    <input type="text" id="friend-location-input"
+                                        placeholder="Current Location (e.g., Bali, Indonesia)"
+                                        style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
                                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                                        <input type="date" id="friend-start-date-input" placeholder="Start Date" style="padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
-                                        <input type="date" id="friend-end-date-input" placeholder="End Date" style="padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                        <input type="date" id="friend-start-date-input" placeholder="Start Date"
+                                            style="padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                        <input type="date" id="friend-end-date-input" placeholder="End Date"
+                                            style="padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
                                     </div>
-                                    <input type="url" id="friend-social-input" placeholder="Social Media URL (optional)" style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                    <input type="url" id="friend-social-input" placeholder="Social Media URL (optional)"
+                                        style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
                                     <button class="location-link-btn" onclick="addFriend()" style="width: 100%;">
                                         Add Person
                                     </button>
                                 </div>
                             </div>
 
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                                 <h3 style="color: var(--text-primary); margin: 0;">People</h3>
                             </div>
                             <div id="friends-list"></div>
@@ -420,10 +464,12 @@
                     <div style="max-width: 700px; margin: 0 auto; padding: 2rem;">
                         <div class="detail-section">
                             <h2>Main Currency</h2>
-                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Select your preferred currency for displaying all costs throughout the app.</p>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Select your preferred
+                                currency for displaying all costs throughout the app.</p>
                             <div class="filter-group">
                                 <label>Main Currency</label>
-                                <select id="main-currency-select" style="padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);">
+                                <select id="main-currency-select"
+                                    style="padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);">
                                     <option value="AUD">AUD - Australian Dollar</option>
                                     <option value="USD">USD - US Dollar</option>
                                     <option value="EUR">EUR - Euro</option>
@@ -439,27 +485,39 @@
 
                         <div class="detail-section" style="margin-top: 2rem;">
                             <h2>Annual Budget</h2>
-                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Set your annual travel budget to help track spending and identify destinations within your means.</p>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Set your annual travel
+                                budget to help track spending and identify destinations within your means.</p>
 
                             <div id="budget-periods-list" style="margin-bottom: 1.5rem;"></div>
 
-                            <div style="padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px;">
-                                <h3 style="margin-top: 0; color: var(--text-primary); font-size: 0.95rem;">Add Budget Period</h3>
-                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+                            <div
+                                style="padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px;">
+                                <h3 style="margin-top: 0; color: var(--text-primary); font-size: 0.95rem;">Add Budget
+                                    Period</h3>
+                                <div
+                                    style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
                                     <div>
-                                        <label style="font-size: 0.85rem; color: var(--text-secondary);">Start Date</label>
-                                        <input type="date" id="budget-start-date" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                        <label style="font-size: 0.85rem; color: var(--text-secondary);">Start
+                                            Date</label>
+                                        <input type="date" id="budget-start-date"
+                                            style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
                                     </div>
                                     <div>
-                                        <label style="font-size: 0.85rem; color: var(--text-secondary);">End Date</label>
-                                        <input type="date" id="budget-end-date" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                        <label style="font-size: 0.85rem; color: var(--text-secondary);">End
+                                            Date</label>
+                                        <input type="date" id="budget-end-date"
+                                            style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
                                     </div>
                                     <div>
-                                        <label style="font-size: 0.85rem; color: var(--text-secondary);">Annual Budget</label>
-                                        <input type="number" id="budget-amount-input" placeholder="e.g., 50000" min="0" step="1000" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                        <label style="font-size: 0.85rem; color: var(--text-secondary);">Annual
+                                            Budget</label>
+                                        <input type="number" id="budget-amount-input" placeholder="e.g., 50000" min="0"
+                                            step="1000"
+                                            style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
                                     </div>
                                 </div>
-                                <button class="location-link-btn" onclick="addBudgetPeriod()" style="width: 100%; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e;">
+                                <button class="location-link-btn" onclick="addBudgetPeriod()"
+                                    style="width: 100%; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e;">
                                     Add Budget Period
                                 </button>
                             </div>
@@ -467,18 +525,24 @@
 
                         <div class="detail-section" style="margin-top: 2rem;">
                             <h2>Travel Budget</h2>
-                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Set aside a separate budget for flights, trains, and other transportation costs.</p>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Set aside a separate budget
+                                for flights, trains, and other transportation costs.</p>
                             <div class="filter-group">
                                 <label>Annual Travel Budget</label>
-                                <input type="number" id="travel-budget-input" placeholder="e.g., 15000" min="0" step="1000" style="padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
-                                <div class="filter-hint">Budget for flights, trains, and transportation (separate from living costs)</div>
+                                <input type="number" id="travel-budget-input" placeholder="e.g., 15000" min="0"
+                                    step="1000"
+                                    style="padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                <div class="filter-hint">Budget for flights, trains, and transportation (separate from
+                                    living costs)</div>
                             </div>
                         </div>
 
-                        <button class="location-link-btn" onclick="saveFinances()" style="margin-top: 2rem; width: 100%;">
+                        <button class="location-link-btn" onclick="saveFinances()"
+                            style="margin-top: 2rem; width: 100%;">
                             Save Finances
                         </button>
-                        <div id="finances-message" style="margin-top: 1rem; padding: 0.75rem; border-radius: 6px; display: none;"></div>
+                        <div id="finances-message"
+                            style="margin-top: 1rem; padding: 0.75rem; border-radius: 6px; display: none;"></div>
                     </div>
                 </div>
             </div>
@@ -495,25 +559,31 @@
                     <div style="max-width: 600px; margin: 0 auto; padding: 2rem;">
                         <div class="detail-section">
                             <h2>Home Airport</h2>
-                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Set your home airport for future flight cost estimates.</p>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Set your home airport for
+                                future flight cost estimates.</p>
                             <div class="filter-group">
                                 <label>Airport Code (IATA)</label>
-                                <input type="text" id="home-airport-input" placeholder="e.g., SYD, LAX, LHR" maxlength="3" style="text-transform: uppercase;" />
+                                <input type="text" id="home-airport-input" placeholder="e.g., SYD, LAX, LHR"
+                                    maxlength="3" style="text-transform: uppercase;" />
                                 <div class="filter-hint">Enter 3-letter IATA code</div>
                             </div>
                         </div>
 
                         <div class="detail-section" style="margin-top: 2rem;">
                             <h2>Passports</h2>
-                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Add your passport details to track expiry dates and plan visa requirements.</p>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Add your passport details to
+                                track expiry dates and plan visa requirements.</p>
 
                             <div id="passport-list"></div>
 
-                            <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px;">
-                                <h3 style="margin-top: 0; color: var(--text-primary); font-size: 0.95rem;">Add New Passport</h3>
+                            <div
+                                style="margin-top: 1.5rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px;">
+                                <h3 style="margin-top: 0; color: var(--text-primary); font-size: 0.95rem;">Add New
+                                    Passport</h3>
                                 <div class="filter-group">
                                     <label>Country</label>
-                                    <input type="text" id="new-passport-country" placeholder="e.g., Australia, United States" />
+                                    <input type="text" id="new-passport-country"
+                                        placeholder="e.g., Australia, United States" />
                                 </div>
                                 <div class="filter-group">
                                     <label>Passport Number</label>
@@ -523,7 +593,8 @@
                                     <label>Expiry Date</label>
                                     <input type="date" id="new-passport-expiry" />
                                 </div>
-                                <button class="location-link-btn" onclick="addPassport()" style="width: 100%; margin-top: 0.5rem;">
+                                <button class="location-link-btn" onclick="addPassport()"
+                                    style="width: 100%; margin-top: 0.5rem;">
                                     Add Passport
                                 </button>
                             </div>
@@ -531,15 +602,22 @@
 
                         <div class="detail-section" style="margin-top: 2rem;">
                             <h2>Interests</h2>
-                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Add your travel interests to help filter and discover destinations that match your preferences.</p>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Add your travel interests to
+                                help filter and discover destinations that match your preferences.</p>
 
                             <div id="interests-list"></div>
 
-                            <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px;">
-                                <h3 style="margin-top: 0; color: var(--text-primary); font-size: 0.95rem;">Add New Interest</h3>
+                            <div
+                                style="margin-top: 1.5rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px;">
+                                <h3 style="margin-top: 0; color: var(--text-primary); font-size: 0.95rem;">Add New
+                                    Interest</h3>
                                 <div style="display: flex; gap: 0.75rem;">
-                                    <input type="text" id="new-interest-input" placeholder="e.g., Architecture, Coffee, Local Cuisine, Adventure Sports" style="flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" onkeypress="if(event.key==='Enter') addInterest()" />
-                                    <button class="location-link-btn" onclick="addInterest()" style="white-space: nowrap;">
+                                    <input type="text" id="new-interest-input"
+                                        placeholder="e.g., Architecture, Coffee, Local Cuisine, Adventure Sports"
+                                        style="flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);"
+                                        onkeypress="if(event.key==='Enter') addInterest()" />
+                                    <button class="location-link-btn" onclick="addInterest()"
+                                        style="white-space: nowrap;">
                                         Add Interest
                                     </button>
                                 </div>
@@ -549,15 +627,22 @@
 
                         <div class="detail-section" style="margin-top: 2rem;">
                             <h2>Languages Spoken</h2>
-                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Add the languages you speak to help you find destinations where you can communicate easily.</p>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Add the languages you speak
+                                to help you find destinations where you can communicate easily.</p>
 
                             <div id="user-languages-list"></div>
 
-                            <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px;">
-                                <h3 style="margin-top: 0; color: var(--text-primary); font-size: 0.95rem;">Add Language</h3>
+                            <div
+                                style="margin-top: 1.5rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px;">
+                                <h3 style="margin-top: 0; color: var(--text-primary); font-size: 0.95rem;">Add Language
+                                </h3>
                                 <div style="display: flex; gap: 0.75rem;">
-                                    <input type="text" id="new-language-input" placeholder="e.g., English, Spanish, Mandarin Chinese" style="flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" onkeypress="if(event.key==='Enter') addUserLanguage()" />
-                                    <button class="location-link-btn" onclick="addUserLanguage()" style="white-space: nowrap;">
+                                    <input type="text" id="new-language-input"
+                                        placeholder="e.g., English, Spanish, Mandarin Chinese"
+                                        style="flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);"
+                                        onkeypress="if(event.key==='Enter') addUserLanguage()" />
+                                    <button class="location-link-btn" onclick="addUserLanguage()"
+                                        style="white-space: nowrap;">
                                         Add Language
                                     </button>
                                 </div>
@@ -565,10 +650,12 @@
                             </div>
                         </div>
 
-                        <button class="location-link-btn" onclick="saveSettings()" style="margin-top: 2rem; width: 100%;">
+                        <button class="location-link-btn" onclick="saveSettings()"
+                            style="margin-top: 2rem; width: 100%;">
                             Save All Configuration
                         </button>
-                        <div id="config-message" style="margin-top: 1rem; padding: 0.75rem; border-radius: 6px; display: none;"></div>
+                        <div id="config-message"
+                            style="margin-top: 1rem; padding: 0.75rem; border-radius: 6px; display: none;"></div>
                     </div>
                 </div>
             </div>
@@ -577,4 +664,5 @@
 
     <script src="app.js?v=29"></script>
 </body>
+
 </html>

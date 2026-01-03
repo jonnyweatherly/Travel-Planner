@@ -306,7 +306,8 @@ header {
     border: 1px solid var(--border-color);
     background: rgba(255, 255, 255, 0.05);
     color: white;
-    width: 300px;
+    width: 100%;
+    max-width: 1200px;
     outline: none;
     backdrop-filter: blur(5px);
 }
@@ -936,4 +937,9 @@ header {
 .timeline-item:hover {
     transform: translateX(5px);
     border-left-color: var(--text-primary);
+}
+/* Loading spinner animation */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
