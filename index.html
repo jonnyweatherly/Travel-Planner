@@ -35,6 +35,9 @@
             <li data-view="friends" onclick="switchView('friends')">
                 <span class="icon">👥</span> Friends & Family
             </li>
+            <li data-view="finances" onclick="switchView('finances')">
+                <span class="icon">💰</span> Finances
+            </li>
             <li data-view="config" onclick="switchView('config')">
                 <span class="icon">⚙️</span> Configuration
             </li>
@@ -170,6 +173,11 @@
                         </button>
                     </div>
                     <div id="smart-query-feedback" style="margin-top: 0.5rem; padding: 0.5rem; border-radius: 6px; display: none; font-size: 0.9rem;"></div>
+                </div>
+                <div style="margin-top: 1rem; display: flex; justify-content: flex-end;">
+                    <button onclick="clearAllFilters()" style="padding: 0.6rem 1.5rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; border-radius: 8px; cursor: pointer; font-size: 0.95rem; font-weight: 600; transition: all 0.2s;">
+                        🗑️ Clear All Filters
+                    </button>
                 </div>
             </header>
 
@@ -341,10 +349,19 @@
                     <div style="max-width: 700px; margin: 0 auto; padding: 2rem;">
                         <div class="detail-section">
                             <h2>Add Item</h2>
-                            <div style="display: flex; gap: 0.5rem; margin-bottom: 2rem;">
+                            <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
                                 <input type="text" id="packing-input" placeholder="E.g., Passport, Sunscreen, Laptop charger..." style="flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" onkeypress="if(event.key==='Enter') addPackingItem()" />
+                                <select id="packing-folder-select" style="padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); min-width: 150px;">
+                                    <option value="">No Bag</option>
+                                </select>
                                 <button class="location-link-btn" onclick="addPackingItem()" style="white-space: nowrap;">
                                     Add Item
+                                </button>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; margin-bottom: 2rem;">
+                                <input type="text" id="new-folder-input" placeholder="E.g., Backpack, Carry-on, Check-in..." style="flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" onkeypress="if(event.key==='Enter') addPackingFolder()" />
+                                <button class="location-link-btn" onclick="addPackingFolder()" style="white-space: nowrap; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e;">
+                                    Add Bag
                                 </button>
                             </div>
 
@@ -387,6 +404,81 @@
                             </div>
                             <div id="friends-list"></div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-finances" class="view-section">
+                <div class="fixed-controls">
+                    <div class="controls-row">
+                        <div style="flex: 1;">
+                            <h2 style="margin: 0; color: var(--text-primary);">Finances</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="scrollable-content">
+                    <div style="max-width: 700px; margin: 0 auto; padding: 2rem;">
+                        <div class="detail-section">
+                            <h2>Main Currency</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Select your preferred currency for displaying all costs throughout the app.</p>
+                            <div class="filter-group">
+                                <label>Main Currency</label>
+                                <select id="main-currency-select" style="padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);">
+                                    <option value="AUD">AUD - Australian Dollar</option>
+                                    <option value="USD">USD - US Dollar</option>
+                                    <option value="EUR">EUR - Euro</option>
+                                    <option value="GBP">GBP - British Pound</option>
+                                    <option value="NZD">NZD - New Zealand Dollar</option>
+                                    <option value="CAD">CAD - Canadian Dollar</option>
+                                    <option value="SGD">SGD - Singapore Dollar</option>
+                                    <option value="THB">THB - Thai Baht</option>
+                                </select>
+                                <div class="filter-hint">All costs will be displayed in this currency</div>
+                            </div>
+                        </div>
+
+                        <div class="detail-section" style="margin-top: 2rem;">
+                            <h2>Annual Budget</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Set your annual travel budget to help track spending and identify destinations within your means.</p>
+
+                            <div id="budget-periods-list" style="margin-bottom: 1.5rem;"></div>
+
+                            <div style="padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px;">
+                                <h3 style="margin-top: 0; color: var(--text-primary); font-size: 0.95rem;">Add Budget Period</h3>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+                                    <div>
+                                        <label style="font-size: 0.85rem; color: var(--text-secondary);">Start Date</label>
+                                        <input type="date" id="budget-start-date" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 0.85rem; color: var(--text-secondary);">End Date</label>
+                                        <input type="date" id="budget-end-date" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 0.85rem; color: var(--text-secondary);">Annual Budget</label>
+                                        <input type="number" id="budget-amount-input" placeholder="e.g., 50000" min="0" step="1000" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                    </div>
+                                </div>
+                                <button class="location-link-btn" onclick="addBudgetPeriod()" style="width: 100%; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e;">
+                                    Add Budget Period
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="detail-section" style="margin-top: 2rem;">
+                            <h2>Travel Budget</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Set aside a separate budget for flights, trains, and other transportation costs.</p>
+                            <div class="filter-group">
+                                <label>Annual Travel Budget</label>
+                                <input type="number" id="travel-budget-input" placeholder="e.g., 15000" min="0" step="1000" style="padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                <div class="filter-hint">Budget for flights, trains, and transportation (separate from living costs)</div>
+                            </div>
+                        </div>
+
+                        <button class="location-link-btn" onclick="saveFinances()" style="margin-top: 2rem; width: 100%;">
+                            Save Finances
+                        </button>
+                        <div id="finances-message" style="margin-top: 1rem; padding: 0.75rem; border-radius: 6px; display: none;"></div>
                     </div>
                 </div>
             </div>
@@ -470,29 +562,6 @@
                                     </button>
                                 </div>
                                 <div class="filter-hint">Press Enter or click Add Language</div>
-                            </div>
-                        </div>
-
-                        <div class="detail-section" style="margin-top: 2rem;">
-                            <h2>Annual Budget</h2>
-                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Set your annual travel budget to help track spending and identify destinations within your means.</p>
-                            <div class="filter-group">
-                                <label>Annual Budget (AUD)</label>
-                                <input type="number" id="annual-budget-input" placeholder="e.g., 50000" min="0" step="1000" style="padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" oninput="updateBudgetDisplay()" />
-                                <div class="filter-hint">Your total travel budget for the year in Australian Dollars</div>
-                            </div>
-
-                            <div id="budget-breakdown" style="margin-top: 1.5rem; padding: 1rem; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 6px; display: none;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                                    <h3 style="margin: 0; color: var(--text-primary); font-size: 0.95rem;">Budget Breakdown</h3>
-                                    <button onclick="toggleBudgetView()" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--accent-color); padding: 0.4rem 0.75rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;" id="budget-toggle-btn">
-                                        Show Weekly
-                                    </button>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; padding: 0.75rem; background: var(--card-bg); border-radius: 6px;">
-                                    <span style="color: var(--text-secondary);" id="budget-period-label">Monthly Budget:</span>
-                                    <span style="color: var(--text-primary); font-weight: 600;" id="budget-amount">A$4,167</span>
-                                </div>
                             </div>
                         </div>
 

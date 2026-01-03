@@ -17,6 +17,8 @@
 17. Allow users to set a "travel budget" for flights, trains, etc in the finances page.
 18. Allow user to set their main currency in the finances page. Display all conversions in that currency.
 19. Use header from the explore page on all pages.
+20. Move the search bar to the top of the explore page, below the "Explore Destinations" heading and subheading.
+
 
 
 ## Stretch Goals

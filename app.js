@@ -1190,6 +1190,7 @@ function switchView(viewName) {
         'todo': 'Travel To-Do List',
         'packing': 'Packing List',
         'friends': 'Friends & Family',
+        'finances': 'Finances',
         'config': 'Settings'
     };
     document.getElementById('page-title').textContent = titles[viewName];
@@ -1198,8 +1199,12 @@ function switchView(viewName) {
     if (viewName === 'seasons') renderSeasons();
     if (viewName === 'timeline') renderTimeline();
     if (viewName === 'todo') renderTodoList();
-    if (viewName === 'packing') renderPackingList();
+    if (viewName === 'packing') {
+        renderPackingFolderSelect();
+        renderPackingList();
+    }
     if (viewName === 'friends') renderFriendsList();
+    if (viewName === 'finances') loadFinances();
     if (viewName === 'config') loadConfig();
 }
 
@@ -1625,6 +1630,158 @@ function getWeeklyBudget() {
     return annualBudget / 52;
 }
 
+// Finances page functions
+function getBudgetPeriods() {
+    const periodsJSON = localStorage.getItem('budgetPeriods');
+    if (!periodsJSON) return [];
+    try {
+        return JSON.parse(periodsJSON);
+    } catch (e) {
+        console.error('Error parsing budget periods:', e);
+        return [];
+    }
+}
+
+function saveBudgetPeriods(periods) {
+    localStorage.setItem('budgetPeriods', JSON.stringify(periods));
+}
+
+function renderBudgetPeriodsList() {
+    const listDiv = document.getElementById('budget-periods-list');
+    if (!listDiv) return;
+
+    const periods = getBudgetPeriods();
+
+    if (periods.length === 0) {
+        listDiv.innerHTML = '';
+        return;
+    }
+
+    listDiv.innerHTML = periods.map((period, index) => `
+        <div style="padding: 1rem; margin-bottom: 0.75rem; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.25rem;">
+                        ${new Date(period.startDate).toLocaleDateString()} - ${new Date(period.endDate).toLocaleDateString()}
+                    </div>
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                        Annual Budget: ${period.currency || 'AUD'}$${formatWithCommas(period.amount)}
+                    </div>
+                </div>
+                <button onclick="removeBudgetPeriod(${index})" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 0.5rem 0.75rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
+                    Remove
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function addBudgetPeriod() {
+    const startDateInput = document.getElementById('budget-start-date');
+    const endDateInput = document.getElementById('budget-end-date');
+    const amountInput = document.getElementById('budget-amount-input');
+    const currencySelect = document.getElementById('main-currency-select');
+
+    if (!startDateInput || !endDateInput || !amountInput) return;
+
+    const startDate = startDateInput.value;
+    const endDate = endDateInput.value;
+    const amount = parseFloat(amountInput.value);
+
+    if (!startDate || !endDate || !amount || amount <= 0) {
+        alert('Please fill in all budget period fields');
+        return;
+    }
+
+    if (new Date(startDate) >= new Date(endDate)) {
+        alert('End date must be after start date');
+        return;
+    }
+
+    const periods = getBudgetPeriods();
+    periods.push({
+        startDate,
+        endDate,
+        amount,
+        currency: currencySelect ? currencySelect.value : 'AUD'
+    });
+
+    // Sort periods by start date
+    periods.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+
+    saveBudgetPeriods(periods);
+
+    // Clear inputs
+    startDateInput.value = '';
+    endDateInput.value = '';
+    amountInput.value = '';
+
+    renderBudgetPeriodsList();
+}
+
+function removeBudgetPeriod(index) {
+    const periods = getBudgetPeriods();
+    if (index >= 0 && index < periods.length) {
+        periods.splice(index, 1);
+        saveBudgetPeriods(periods);
+        renderBudgetPeriodsList();
+    }
+}
+
+function getCurrentBudgetPeriod(date = new Date()) {
+    const periods = getBudgetPeriods();
+    const targetDate = new Date(date);
+
+    for (const period of periods) {
+        const startDate = new Date(period.startDate);
+        const endDate = new Date(period.endDate);
+        if (targetDate >= startDate && targetDate <= endDate) {
+            return period;
+        }
+    }
+
+    return null;
+}
+
+function loadFinances() {
+    const mainCurrency = localStorage.getItem('mainCurrency') || 'AUD';
+    const travelBudget = localStorage.getItem('travelBudget') || '';
+
+    const currencySelect = document.getElementById('main-currency-select');
+    const travelBudgetInput = document.getElementById('travel-budget-input');
+
+    if (currencySelect) currencySelect.value = mainCurrency;
+    if (travelBudgetInput) travelBudgetInput.value = travelBudget;
+
+    renderBudgetPeriodsList();
+}
+
+function saveFinances() {
+    const currencySelect = document.getElementById('main-currency-select');
+    const travelBudgetInput = document.getElementById('travel-budget-input');
+
+    const mainCurrency = currencySelect ? currencySelect.value : 'AUD';
+    const travelBudget = travelBudgetInput ? travelBudgetInput.value : '';
+
+    localStorage.setItem('mainCurrency', mainCurrency);
+    localStorage.setItem('travelBudget', travelBudget);
+
+    const messageDiv = document.getElementById('finances-message');
+    if (messageDiv) {
+        messageDiv.style.display = 'block';
+        messageDiv.style.background = 'rgba(34, 197, 94, 0.1)';
+        messageDiv.style.border = '1px solid rgba(34, 197, 94, 0.3)';
+        messageDiv.style.color = '#22c55e';
+        messageDiv.textContent = 'Finances saved successfully!';
+
+        setTimeout(() => {
+            messageDiv.style.display = 'none';
+        }, 3000);
+    }
+
+    renderLocations();
+}
+
 // Filter category toggle function
 function toggleFilterCategory(headerElement) {
     const content = headerElement.nextElementSibling;
@@ -1855,11 +2012,82 @@ function savePackingItems(items) {
     localStorage.setItem('packingList', JSON.stringify(items));
 }
 
+function getPackingFolders() {
+    const foldersJSON = localStorage.getItem('packingFolders');
+    if (!foldersJSON) return [];
+    try {
+        return JSON.parse(foldersJSON);
+    } catch (e) {
+        console.error('Error parsing packing folders:', e);
+        return [];
+    }
+}
+
+function savePackingFolders(folders) {
+    localStorage.setItem('packingFolders', JSON.stringify(folders));
+}
+
+function renderPackingFolderSelect() {
+    const select = document.getElementById('packing-folder-select');
+    if (!select) return;
+
+    const folders = getPackingFolders();
+    const currentValue = select.value;
+
+    select.innerHTML = '<option value="">No Bag</option>' +
+        folders.map(folder => `<option value="${folder}">${folder}</option>`).join('');
+
+    if (currentValue && folders.includes(currentValue)) {
+        select.value = currentValue;
+    }
+}
+
+function addPackingFolder() {
+    const input = document.getElementById('new-folder-input');
+    if (!input) return;
+
+    const folderName = input.value.trim();
+    if (!folderName) return;
+
+    const folders = getPackingFolders();
+    if (folders.includes(folderName)) {
+        alert('This bag already exists!');
+        return;
+    }
+
+    folders.push(folderName);
+    savePackingFolders(folders);
+
+    input.value = '';
+    renderPackingFolderSelect();
+    renderPackingList();
+}
+
+function removePackingFolder(folderName) {
+    if (!confirm(`Remove bag "${folderName}"? Items in this bag will be moved to "No Bag".`)) return;
+
+    const folders = getPackingFolders();
+    const updatedFolders = folders.filter(f => f !== folderName);
+    savePackingFolders(updatedFolders);
+
+    const items = getPackingItems();
+    items.forEach(item => {
+        if (item.folder === folderName) {
+            item.folder = '';
+        }
+    });
+    savePackingItems(items);
+
+    renderPackingFolderSelect();
+    renderPackingList();
+}
+
 function renderPackingList() {
     const listDiv = document.getElementById('packing-list');
     if (!listDiv) return;
 
     const items = getPackingItems();
+    const folders = getPackingFolders();
 
     if (items.length === 0) {
         listDiv.innerHTML = '<p style="color: var(--text-secondary); font-style: italic; text-align: center;">No items yet. Add your first packing item above!</p>';
@@ -1869,7 +2097,23 @@ function renderPackingList() {
     const packedCount = items.filter(item => item.packed).length;
     const totalCount = items.length;
 
-    listDiv.innerHTML = `
+    // Group items by folder
+    const itemsByFolder = {};
+    itemsByFolder[''] = []; // No Bag group
+
+    folders.forEach(folder => {
+        itemsByFolder[folder] = [];
+    });
+
+    items.forEach((item, index) => {
+        const folder = item.folder || '';
+        if (!itemsByFolder[folder]) {
+            itemsByFolder[folder] = [];
+        }
+        itemsByFolder[folder].push({ ...item, originalIndex: index });
+    });
+
+    let html = `
         <div style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px;">
             <div style="color: var(--text-primary); font-size: 1.1rem; font-weight: 600;">
                 Progress: ${packedCount} / ${totalCount} items packed (${Math.round((packedCount/totalCount)*100)}%)
@@ -1878,27 +2122,74 @@ function renderPackingList() {
                 <div style="height: 100%; background: var(--accent-color); width: ${(packedCount/totalCount)*100}%; transition: width 0.3s;"></div>
             </div>
         </div>
-        ${items.map((item, index) => `
-            <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; margin-bottom: 0.75rem; background: ${item.packed ? 'rgba(34, 197, 94, 0.1)' : 'var(--card-bg)'}; border: 1px solid ${item.packed ? 'rgba(34, 197, 94, 0.3)' : 'var(--border-color)'}; border-radius: 8px;">
-                <input type="checkbox" ${item.packed ? 'checked' : ''} onchange="togglePackingItem(${index})" style="width: 20px; height: 20px; cursor: pointer;" />
-                <span style="flex: 1; color: var(--text-primary); ${item.packed ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${item.text}</span>
-                <button onclick="removePackingItem(${index})" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 0.5rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
-                    Remove
-                </button>
-            </div>
-        `).join('')}
     `;
+
+    // Render folders
+    folders.forEach(folder => {
+        if (itemsByFolder[folder] && itemsByFolder[folder].length > 0) {
+            const folderPackedCount = itemsByFolder[folder].filter(item => item.packed).length;
+            const folderTotalCount = itemsByFolder[folder].length;
+
+            html += `
+                <div style="margin-bottom: 1.5rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; padding: 0.75rem; background: rgba(147, 51, 234, 0.1); border: 1px solid rgba(147, 51, 234, 0.3); border-radius: 8px;">
+                        <h3 style="margin: 0; color: var(--text-primary); font-size: 1.1rem;">🎒 ${folder} <span style="font-size: 0.9rem; color: var(--text-secondary); font-weight: 400;">(${folderPackedCount}/${folderTotalCount})</span></h3>
+                        <button onclick="removePackingFolder('${folder}')" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">
+                            Remove Bag
+                        </button>
+                    </div>
+                    ${itemsByFolder[folder].map(item => `
+                        <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; margin-bottom: 0.5rem; margin-left: 1rem; background: ${item.packed ? 'rgba(34, 197, 94, 0.1)' : 'var(--card-bg)'}; border: 1px solid ${item.packed ? 'rgba(34, 197, 94, 0.3)' : 'var(--border-color)'}; border-radius: 8px;">
+                            <input type="checkbox" ${item.packed ? 'checked' : ''} onchange="togglePackingItem(${item.originalIndex})" style="width: 20px; height: 20px; cursor: pointer;" />
+                            <span style="flex: 1; color: var(--text-primary); ${item.packed ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${item.text}</span>
+                            <button onclick="removePackingItem(${item.originalIndex})" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 0.5rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
+                                Remove
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+    });
+
+    // Render "No Bag" items
+    if (itemsByFolder[''].length > 0) {
+        const noBagPackedCount = itemsByFolder[''].filter(item => item.packed).length;
+        const noBagTotalCount = itemsByFolder[''].length;
+
+        html += `
+            <div style="margin-bottom: 1.5rem;">
+                <div style="margin-bottom: 0.75rem; padding: 0.75rem; background: rgba(100, 116, 139, 0.1); border: 1px solid rgba(100, 116, 139, 0.3); border-radius: 8px;">
+                    <h3 style="margin: 0; color: var(--text-primary); font-size: 1.1rem;">📦 No Bag <span style="font-size: 0.9rem; color: var(--text-secondary); font-weight: 400;">(${noBagPackedCount}/${noBagTotalCount})</span></h3>
+                </div>
+                ${itemsByFolder[''].map(item => `
+                    <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; margin-bottom: 0.5rem; margin-left: 1rem; background: ${item.packed ? 'rgba(34, 197, 94, 0.1)' : 'var(--card-bg)'}; border: 1px solid ${item.packed ? 'rgba(34, 197, 94, 0.3)' : 'var(--border-color)'}; border-radius: 8px;">
+                        <input type="checkbox" ${item.packed ? 'checked' : ''} onchange="togglePackingItem(${item.originalIndex})" style="width: 20px; height: 20px; cursor: pointer;" />
+                        <span style="flex: 1; color: var(--text-primary); ${item.packed ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${item.text}</span>
+                        <button onclick="removePackingItem(${item.originalIndex})" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 0.5rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
+                            Remove
+                        </button>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    listDiv.innerHTML = html;
 }
 
 function addPackingItem() {
     const input = document.getElementById('packing-input');
+    const folderSelect = document.getElementById('packing-folder-select');
     if (!input) return;
 
     const text = input.value.trim();
     if (!text) return;
 
+    const folder = folderSelect ? folderSelect.value : '';
+
     const items = getPackingItems();
-    items.push({ text, packed: false, createdAt: new Date().toISOString() });
+    items.push({ text, packed: false, folder, createdAt: new Date().toISOString() });
     savePackingItems(items);
 
     input.value = '';
