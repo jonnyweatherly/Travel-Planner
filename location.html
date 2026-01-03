@@ -4,41 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Location Details - NomadPlan</title>
-    <link rel="stylesheet" href="style.css?v=5">
+    <link rel="stylesheet" href="style.css?v=6">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar Navigation -->
-        <nav class="sidebar">
-            <div class="logo">
-                <h2><a href="index.html" style="text-decoration: none; color: inherit;">Nomad<span class="highlight">Plan</span></a></h2>
-            </div>
+    <!-- Top Navigation Bar -->
+    <nav class="top-navbar">
+        <div class="navbar-logo">
+            <h2><a href="index.html" style="text-decoration: none; color: inherit;">Nomad<span class="highlight">Plan</span></a></h2>
+        </div>
+        <ul class="navbar-nav-links">
+            <li data-view="locations" onclick="window.location.href='index.html'">
+                <span class="icon">🌍</span> Explore
+            </li>
+            <li data-view="timeline" onclick="window.location.href='index.html#timeline'">
+                <span class="icon">📅</span> Timeline
+            </li>
+            <li data-view="config" onclick="window.location.href='index.html#config'">
+                <span class="icon">⚙️</span> Configuration
+            </li>
+        </ul>
+        <button class="back-btn" onclick="window.history.back()" style="margin-left: auto; padding: 0.5rem 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--accent-color); border-radius: 6px; cursor: pointer; font-size: 0.9rem; white-space: nowrap;">
+            ← Back
+        </button>
+    </nav>
 
-            <ul class="nav-links">
-                <li data-view="locations" onclick="window.location.href='index.html'">
-                    <span class="icon">🌍</span> Explore
-                </li>
-                <li data-view="timeline" onclick="window.location.href='index.html#timeline'">
-                    <span class="icon">📅</span> Timeline
-                </li>
-                <li data-view="config" onclick="window.location.href='index.html#config'">
-                    <span class="icon">⚙️</span> Settings
-                </li>
-            </ul>
-
-            <div class="back-button-container">
-                <button class="back-btn" onclick="window.history.back()">
-                    ← Back to Explore
-                </button>
-            </div>
-        </nav>
-
+    <div class="app-container" style="height: calc(100vh - 60px);">
         <!-- Main Content Area -->
-        <main class="content-area">
+        <main class="content-area" style="width: 100%; overflow-y: auto;">
             <header>
                 <div class="header-text">
                     <h1 id="location-name">Loading...</h1>

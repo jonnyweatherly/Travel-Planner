@@ -1175,11 +1175,11 @@ function renderCurrentView() {
 function switchView(viewName) {
     // Hide all
     document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.nav-links li').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.navbar-nav-links li').forEach(el => el.classList.remove('active'));
 
     // Show active
     document.getElementById(`view-${viewName}`).classList.add('active');
-    document.querySelector(`li[data-view="${viewName}"]`).classList.add('active');
+    document.querySelector(`.navbar-nav-links li[data-view="${viewName}"]`).classList.add('active');
 
     // Update Header
     const titles = {

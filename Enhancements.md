@@ -10,6 +10,13 @@
 10. Cost per week on location cards should be coloured red if it exceeds the user's weekly budget, and orange if it is more than 80% of the budget.
 11. The sidebar navigation should be the same for all pages, and moved to the top of all pages, while keeping the filters on the sidebar to the left.
 12. Change name of "settings" page to "Configuration".
+13. Add "Clear All Filters" button to top of explore page.
+14. Add nameable "folders" for packing list items, to allow users to say which bag each item goes in.
+15. Break financial config out into a separate finances page.
+16. Set date ranges for budgets (to allow for pay rises etc)
+17. Allow users to set a "travel budget" for flights, trains, etc in the finances page.
+18. Allow user to set their main currency in the finances page. Display all conversions in that currency.
+19. Use header from the explore page on all pages.
 
 
 ## Stretch Goals

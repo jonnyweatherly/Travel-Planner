@@ -4,44 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NomadPlan - Digital Nomad Travel Planner</title>
-    <link rel="stylesheet" href="style.css?v=5">
+    <link rel="stylesheet" href="style.css?v=6">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar Navigation -->
-        <nav class="sidebar">
-            <div class="logo">
-                <h2>Nomad<span class="highlight">Plan</span></h2>
-            </div>
-            
-            <ul class="nav-links">
-                <li class="active" data-view="locations" onclick="switchView('locations')">
-                    <span class="icon">🌍</span> Explore
-                </li>
-                <li data-view="timeline" onclick="switchView('timeline')">
-                    <span class="icon">📅</span> Timeline
-                </li>
-                <li data-view="reports" onclick="switchView('reports')">
-                    <span class="icon">📊</span> Reports
-                </li>
-                <li data-view="todo" onclick="switchView('todo')">
-                    <span class="icon">✓</span> To-Do
-                </li>
-                <li data-view="packing" onclick="switchView('packing')">
-                    <span class="icon">🎒</span> Packing
-                </li>
-                <li data-view="friends" onclick="switchView('friends')">
-                    <span class="icon">👥</span> Friends & Family
-                </li>
-                <li data-view="config" onclick="switchView('config')">
-                    <span class="icon">⚙️</span> Configuration
-                </li>
-            </ul>
+    <!-- Top Navigation Bar -->
+    <nav class="top-navbar">
+        <div class="navbar-logo">
+            <h2>Nomad<span class="highlight">Plan</span></h2>
+        </div>
+        <ul class="navbar-nav-links">
+            <li class="active" data-view="locations" onclick="switchView('locations')">
+                <span class="icon">🌍</span> Explore
+            </li>
+            <li data-view="timeline" onclick="switchView('timeline')">
+                <span class="icon">📅</span> Timeline
+            </li>
+            <li data-view="reports" onclick="switchView('reports')">
+                <span class="icon">📊</span> Reports
+            </li>
+            <li data-view="todo" onclick="switchView('todo')">
+                <span class="icon">✓</span> To-Do
+            </li>
+            <li data-view="packing" onclick="switchView('packing')">
+                <span class="icon">🎒</span> Packing
+            </li>
+            <li data-view="friends" onclick="switchView('friends')">
+                <span class="icon">👥</span> Friends & Family
+            </li>
+            <li data-view="config" onclick="switchView('config')">
+                <span class="icon">⚙️</span> Configuration
+            </li>
+        </ul>
+    </nav>
 
+    <div class="app-container">
+        <!-- Left Sidebar (Filters Only) -->
+        <aside class="filters-sidebar">
             <div class="filters-panel" id="filters-locations">
                 <h3>Filters</h3>
 
@@ -150,7 +152,7 @@
                     </div>
                 </div>
             </div>
-        </nav>
+        </aside>
 
         <!-- Main Content Area -->
         <main class="content-area">
@@ -504,6 +506,6 @@
         </main>
     </div>
 
-    <script src="app.js?v=28"></script>
+    <script src="app.js?v=29"></script>
 </body>
 </html>
