@@ -3,6 +3,7 @@ venv/
 *.log
 *.csv
 *.html
+fix-git-history.sh
 
 !sample_*.csv
 !demo_*.csv

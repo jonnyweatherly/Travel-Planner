@@ -1,23 +1,18 @@
 [
   {
-    "Location": "Events",
-    "Month": "Jan",
-    "Quality": ""
-  },
-  {
     "Location": "313",
     "Month": "Jan",
-    "Quality": "Wakeboarding"
+    "Quality": "Closed"
   },
   {
     "Location": "Hipnotics",
     "Month": "Jan",
-    "Quality": "Wakeboarding"
+    "Quality": "Closed"
   },
   {
     "Location": "Germany",
     "Month": "Jan",
-    "Quality": "Wakeboarding"
+    "Quality": "Winter"
   },
   {
     "Location": "France",
@@ -42,7 +37,7 @@
   {
     "Location": "NZ",
     "Month": "Jan",
-    "Quality": "Wakeboarding"
+    "Quality": "Summer"
   },
   {
     "Location": "California",
@@ -52,7 +47,7 @@
   {
     "Location": "Thailand",
     "Month": "Jan",
-    "Quality": "Wakeboarding"
+    "Quality": "Summer"
   },
   {
     "Location": "Vietnam",
@@ -82,12 +77,7 @@
   {
     "Location": "Australia",
     "Month": "Jan",
-    "Quality": "Volleyball"
-  },
-  {
-    "Location": "Events",
-    "Month": "Feb",
-    "Quality": "NZ Summer"
+    "Quality": "Summer"
   },
   {
     "Location": "313",
@@ -170,11 +160,6 @@
     "Quality": "Summer"
   },
   {
-    "Location": "Events",
-    "Month": "Mar",
-    "Quality": "ISO 14064"
-  },
-  {
     "Location": "313",
     "Month": "Mar",
     "Quality": "Closed"
@@ -253,11 +238,6 @@
     "Location": "Australia",
     "Month": "Mar",
     "Quality": "Summer"
-  },
-  {
-    "Location": "Events",
-    "Month": "Apr",
-    "Quality": ""
   },
   {
     "Location": "313",
@@ -340,11 +320,6 @@
     "Quality": "Summer"
   },
   {
-    "Location": "Events",
-    "Month": "May",
-    "Quality": "ISO Audits"
-  },
-  {
     "Location": "313",
     "Month": "May",
     "Quality": "Closed"
@@ -425,11 +400,6 @@
     "Quality": "Autumn"
   },
   {
-    "Location": "Events",
-    "Month": "Jun",
-    "Quality": ""
-  },
-  {
     "Location": "313",
     "Month": "Jun",
     "Quality": "Winter"
@@ -508,11 +478,6 @@
     "Location": "Australia",
     "Month": "Jun",
     "Quality": "Autumn"
-  },
-  {
-    "Location": "Events",
-    "Month": "Jul",
-    "Quality": ""
   },
   {
     "Location": "313",
@@ -595,11 +560,6 @@
     "Quality": "Winter"
   },
   {
-    "Location": "Events",
-    "Month": "Aug",
-    "Quality": ""
-  },
-  {
     "Location": "313",
     "Month": "Aug",
     "Quality": "Summer"
@@ -678,11 +638,6 @@
     "Location": "Australia",
     "Month": "Aug",
     "Quality": "Winter"
-  },
-  {
-    "Location": "Events",
-    "Month": "Sep",
-    "Quality": "Harvest"
   },
   {
     "Location": "313",
@@ -765,11 +720,6 @@
     "Quality": "Spring"
   },
   {
-    "Location": "Events",
-    "Month": "Oct",
-    "Quality": "Harvest"
-  },
-  {
     "Location": "313",
     "Month": "Oct",
     "Quality": "Winter"
@@ -848,11 +798,6 @@
     "Location": "Australia",
     "Month": "Oct",
     "Quality": "Spring"
-  },
-  {
-    "Location": "Events",
-    "Month": "Nov",
-    "Quality": "Harvest"
   },
   {
     "Location": "313",
@@ -933,11 +878,6 @@
     "Location": "Australia",
     "Month": "Nov",
     "Quality": "Spring"
-  },
-  {
-    "Location": "Events",
-    "Month": "Dec",
-    "Quality": ""
   },
   {
     "Location": "313",

@@ -4,6 +4,7 @@ const STATE = {
     timeline: [],
     flightPrices: null,
     languages: {},
+    events: [],
     selectedMonth: 'Jan',
     filters: {
         sport: 'all',
@@ -19,7 +20,12 @@ const STATE = {
         minFoodCost: null,
         maxFoodCost: null,
         favoritesOnly: false
-    }
+    },
+    filterFavs: {
+        languages: [],
+        visaRegions: []
+    },
+    userVisas: []
 };
 
 // Favorites management
@@ -50,28 +56,150 @@ function isFavorite(locationName) {
     return getFavoriteLocations().includes(locationName);
 }
 
-function toggleFavoritesFilter() {
-    const checkbox = document.getElementById('favorites-filter');
-    STATE.filters.favoritesOnly = checkbox ? checkbox.checked : false;
+// Filter Favorites management
+function getFilterFavs() {
+    const favsJSON = localStorage.getItem('filterFavorites');
+    if (!favsJSON) return { languages: [], visaRegions: [] };
+    try {
+        const favs = JSON.parse(favsJSON);
+        return {
+            languages: favs.languages || [],
+            visaRegions: favs.visaRegions || []
+        };
+    } catch (e) {
+        console.error('Error parsing filter favorites:', e);
+        return { languages: [], visaRegions: [] };
+    }
+}
+
+function saveFilterFavs(favs) {
+    localStorage.setItem('filterFavorites', JSON.stringify(favs));
+}
+
+function toggleFilterFav(type, value) {
+    const favs = getFilterFavs();
+    const list = favs[type];
+    const index = list.indexOf(value);
+
+    if (index > -1) {
+        list.splice(index, 1);
+    } else {
+        list.push(value);
+    }
+
+    saveFilterFavs(favs);
+    populateFilters();
     renderCurrentView();
 }
 
-// Fuzzy search for filter select boxes
+// User Visas management
+function getUserVisas() {
+    const visasJSON = localStorage.getItem('userVisas');
+    if (!visasJSON) return [];
+    try {
+        return JSON.parse(visasJSON);
+    } catch (e) {
+        console.error('Error parsing user visas:', e);
+        return [];
+    }
+}
+
+function saveUserVisas(visas) {
+    localStorage.setItem('userVisas', JSON.stringify(visas));
+}
+
+function toggleFavoritesFilter() {
+    const checkbox = document.getElementById('favorites-filter');
+    STATE.filters.favoritesOnly = checkbox ? checkbox.checked : false;
+
+    // Update label color
+    const label = document.getElementById('favorites-label');
+    if (label) {
+        label.style.color = STATE.filters.favoritesOnly ? '#f43f5e' : 'rgba(148, 163, 184, 0.3)';
+    }
+
+    renderCurrentView();
+}
+
+// Fuse.js instances cache for each select element
+const fuseInstances = {};
+
+// Fuzzy search for filter select boxes using Fuse.js
 function filterSelectOptions(selectId, searchInputId) {
     const select = document.getElementById(selectId);
     const searchInput = document.getElementById(searchInputId);
 
     if (!select || !searchInput) return;
 
-    const searchTerm = searchInput.value.toLowerCase();
+    const searchTerm = searchInput.value.trim();
     const options = Array.from(select.options);
 
-    options.forEach(option => {
-        const optionText = option.textContent.toLowerCase();
-        // Simple fuzzy match: show if search term is contained in option text
-        const matches = optionText.includes(searchTerm);
-        option.style.display = matches ? '' : 'none';
+    // If search is empty, show all options
+    if (!searchTerm) {
+        options.forEach(option => {
+            option.style.display = '';
+        });
+        return;
+    }
+
+    // Initialize Fuse.js instance for this select if not already created
+    if (!fuseInstances[selectId]) {
+        const optionsData = options.map((option, index) => ({
+            text: option.textContent,
+            index: index
+        }));
+
+        fuseInstances[selectId] = new Fuse(optionsData, {
+            keys: ['text'],
+            threshold: 0.5,        // 0.0 = perfect match, 1.0 = match anything
+            distance: 100,         // How far to search for matches
+            ignoreLocation: true,  // Don't care where in the string the match is
+            minMatchCharLength: 1  // Minimum character length to match
+        });
+    }
+
+    // Perform fuzzy search
+    const results = fuseInstances[selectId].search(searchTerm);
+    const matchedIndices = new Set(results.map(result => result.item.index));
+
+    // Show/hide options based on fuzzy search results
+    options.forEach((option, index) => {
+        option.style.display = matchedIndices.has(index) ? '' : 'none';
     });
+}
+
+function handleInterestSearchKey(event) {
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+        const input = event.target;
+        const interest = input.value.trim();
+        if (interest) {
+            // Check if already in list
+            const interests = getInterests();
+            if (!interests.some(i => i.toLowerCase() === interest.toLowerCase())) {
+                interests.push(interest);
+                saveInterests(interests);
+
+                // Refresh interest filter dropdown
+                const interestsSelect = document.getElementById('interests-filter');
+                if (interestsSelect) {
+                    const opt = document.createElement('option');
+                    opt.value = interest;
+                    opt.textContent = interest;
+                    opt.selected = true; // Automatically select the new interest
+                    interestsSelect.appendChild(opt);
+
+                    // Update current filters state
+                    STATE.filters.interests = Array.from(interestsSelect.selectedOptions).map(opt => opt.value);
+                }
+
+                renderInterestsList(); // Refresh the list in the config view if open
+                renderCurrentView(); // Refresh location results
+                showMessage(`Interest added: ${interest}`, 'success');
+            }
+            input.value = '';
+            filterSelectOptions('interests-filter', 'interests-search');
+        }
+    }
 }
 
 // Config mapping for column names based on observed data
@@ -104,17 +232,24 @@ const COL_MAP = {
     }
 };
 
+const SPORT_SYNONYMS = {
+    'wakeboarding': ['cable', 'wake'],
+    'surfing': ['surf'],
+    'volleyball': ['volley', 'vb']
+};
+
 async function init() {
     console.log('Initializing App...');
 
     try {
         // Parallel Fetch
-        const [locRes, seasRes, timeRes, flightRes, langRes] = await Promise.all([
+        const [locRes, seasRes, timeRes, flightRes, langRes, eventsRes] = await Promise.all([
             fetch('data/locations.json'),
             fetch('data/seasons.json'),
             fetch('data/timeline.json'),
             fetch('data/flight-prices.json').catch(() => null), // Optional - don't fail if not present
-            fetch('data/languages.json').catch(() => null) // Optional - don't fail if not present
+            fetch('data/languages.json').catch(() => null), // Optional - don't fail if not present
+            fetch('data/events.json').catch(() => null) // Optional - don't fail if not present
         ]);
 
         if (!locRes.ok || !seasRes.ok || !timeRes.ok) {
@@ -141,10 +276,26 @@ async function init() {
             console.log('Languages data not available');
         }
 
+        // Load events if available
+        if (eventsRes && eventsRes.ok) {
+            STATE.events = await eventsRes.json();
+            console.log('Events loaded');
+        } else {
+            console.log('Events data not available');
+        }
+
         console.log('Data Loaded:', STATE);
 
         populateFilters();
         renderLocations();
+        displayMonthEvents(STATE.selectedMonth);
+
+        // Handle view parameter from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const viewParam = urlParams.get('view');
+        if (viewParam) {
+            switchView(viewParam);
+        }
 
     } catch (error) {
         console.error('Error loading data:', error);
@@ -179,6 +330,25 @@ function getVisaRegion(country, schengenFlag) {
 
     // For other countries, return the country name as the visa region
     return country;
+}
+
+// Helper function to get season data for a location, with fallback to country-level seasons
+function getSeasonData(locationName, month, country = null) {
+    // First, try to find season data for the specific location
+    let seasonData = STATE.seasons.find(s =>
+        s[COL_MAP.season.location] === locationName &&
+        (s[COL_MAP.season.month] || '').includes(month)
+    );
+
+    // If no location-specific data found and country is provided, try country-level data
+    if (!seasonData && country) {
+        seasonData = STATE.seasons.find(s =>
+            s[COL_MAP.season.location] === country &&
+            (s[COL_MAP.season.month] || '').includes(month)
+        );
+    }
+
+    return seasonData;
 }
 
 function populateFilters() {
@@ -242,8 +412,15 @@ function populateFilters() {
 
     // Populate country multi-select
     const countrySelect = document.getElementById('country-filter');
+
+    // Add "Anywhere" at the top
+    const anywhereOpt = document.createElement('option');
+    anywhereOpt.value = 'Anywhere';
+    anywhereOpt.textContent = 'Anywhere';
+    countrySelect.appendChild(anywhereOpt);
+
     Array.from(countries).sort().forEach(c => {
-        if (!c) return;
+        if (!c || c === 'Anywhere') return;
         const opt = document.createElement('option');
         opt.value = c;
         opt.textContent = c;
@@ -262,10 +439,20 @@ function populateFilters() {
     // Populate language filter (multiselect)
     const languageSelect = document.getElementById('language-filter');
     if (languageSelect) {
-        Array.from(allLanguages).sort().forEach(language => {
+        const favLanguages = getFilterFavs().languages;
+        const sortedLanguages = Array.from(allLanguages).sort((a, b) => {
+            const aFav = favLanguages.includes(a);
+            const bFav = favLanguages.includes(b);
+            if (aFav && !bFav) return -1;
+            if (!aFav && bFav) return 1;
+            return a.localeCompare(b);
+        });
+
+        sortedLanguages.forEach(language => {
             const opt = document.createElement('option');
             opt.value = language;
-            opt.textContent = language;
+            const isFav = favLanguages.includes(language);
+            opt.textContent = isFav ? `❤️ ${language}` : language;
             languageSelect.appendChild(opt);
         });
     }
@@ -313,10 +500,20 @@ function updateVisaRegionFilter() {
     });
 
     // Populate with filtered visa regions
-    Array.from(relevantVisaRegions).sort().forEach(region => {
+    const favVisaRegions = getFilterFavs().visaRegions;
+    const sortedVisaRegions = Array.from(relevantVisaRegions).sort((a, b) => {
+        const aFav = favVisaRegions.includes(a);
+        const bFav = favVisaRegions.includes(b);
+        if (aFav && !bFav) return -1;
+        if (!aFav && bFav) return 1;
+        return a.localeCompare(b);
+    });
+
+    sortedVisaRegions.forEach(region => {
         const opt = document.createElement('option');
         opt.value = region;
-        opt.textContent = region;
+        const isFav = favVisaRegions.includes(region);
+        opt.textContent = isFav ? `❤️ ${region}` : region;
         visaSelect.appendChild(opt);
     });
 
@@ -506,7 +703,7 @@ function updateFiltersFromDOM() {
 }
 
 // Centralized filter logic that can be applied to any location-based data
-function applyLocationFilters(items, locationField = COL_MAP.loc.name, countryField = COL_MAP.loc.country, continentField = COL_MAP.loc.continent, sportField = COL_MAP.loc.sport, weeklyCostField = COL_MAP.loc.weeklyCost, foodCostField = COL_MAP.loc.foodCost, schengenField = COL_MAP.loc.schengen, tagsField = COL_MAP.loc.tags) {
+function applyLocationFilters(items, locationField = COL_MAP.loc.name, countryField = COL_MAP.loc.country, continentField = COL_MAP.loc.continent, sportField = COL_MAP.loc.sport, weeklyCostField = COL_MAP.loc.weeklyCost, foodCostField = COL_MAP.loc.foodCost, rentCostField = COL_MAP.loc.rentCost, schengenField = COL_MAP.loc.schengen, tagsField = COL_MAP.loc.tags) {
     return items.filter(item => {
         const sport = item[sportField] || '';
         const country = item[countryField] || '';
@@ -521,8 +718,28 @@ function applyLocationFilters(items, locationField = COL_MAP.loc.name, countryFi
         // Text/Category filters
         if (STATE.filters.sport !== 'all' && sport !== STATE.filters.sport) return false;
         if (STATE.filters.region !== 'all' && continent !== STATE.filters.region) return false;
-        if (STATE.filters.countries.length > 0 && !STATE.filters.countries.includes(country)) return false;
-        if (STATE.filters.search && !location.toLowerCase().includes(STATE.filters.search) && !country.toLowerCase().includes(STATE.filters.search)) return false;
+        if (STATE.filters.countries.length > 0 &&
+            !STATE.filters.countries.includes('Anywhere') &&
+            !STATE.filters.countries.includes(country)) return false;
+        if (STATE.filters.search) {
+            const searchLower = STATE.filters.search;
+            const matchesLocation = location.toLowerCase().includes(searchLower);
+            const matchesCountry = country.toLowerCase().includes(searchLower);
+            const matchesSport = sport.toLowerCase().includes(searchLower);
+
+            // Check synonyms
+            let matchesSynonym = false;
+            for (const [canonical, synonyms] of Object.entries(SPORT_SYNONYMS)) {
+                if (sport.toLowerCase() === canonical.toLowerCase()) {
+                    if (synonyms.some(s => s.toLowerCase().includes(searchLower) || searchLower.includes(s.toLowerCase()))) {
+                        matchesSynonym = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!matchesLocation && !matchesCountry && !matchesSport && !matchesSynonym) return false;
+        }
 
         // Visa region filter
         if (STATE.filters.visaRegion !== 'all') {
@@ -532,10 +749,7 @@ function applyLocationFilters(items, locationField = COL_MAP.loc.name, countryFi
 
         // Season quality filter
         if (STATE.filters.season !== 'all') {
-            const seasonData = STATE.seasons.find(s =>
-                s[COL_MAP.season.location] === location &&
-                (s[COL_MAP.season.month] || '').includes(STATE.selectedMonth)
-            );
+            const seasonData = getSeasonData(location, STATE.selectedMonth, country);
             const seasonQuality = seasonData ? seasonData[COL_MAP.season.quality] : null;
             if (seasonQuality !== STATE.filters.season) return false;
         }
@@ -559,7 +773,13 @@ function applyLocationFilters(items, locationField = COL_MAP.loc.name, countryFi
         }
 
         // Cost range filters
-        const weeklyCost = parseCurrency(item[weeklyCostField]);
+        let weeklyCost = parseCurrency(item[weeklyCostField]);
+        if (weeklyCost === null) {
+            // Try calculating
+            const monthlyTotal = parseCurrency(item[foodCostField]) +
+                parseCurrency(item[rentCostField]);
+            weeklyCost = monthlyTotal > 0 ? (monthlyTotal / 4.33) : null;
+        }
         const foodCost = parseCurrency(item[foodCostField]);
 
         if (STATE.filters.minWeeklyCost !== null && weeklyCost !== null && weeklyCost < STATE.filters.minWeeklyCost) return false;
@@ -627,14 +847,15 @@ function renderLocations() {
     const sortValue = document.getElementById('sort-select').value;
     const secondarySortValue = document.getElementById('sort-select-secondary')?.value || 'none';
 
-    // Define season quality ranking (best to worst)
+    // Define season ranking (best to worst: Summer, Autumn, Spring, All Year, Winter)
     const seasonRanking = {
-        'good': 1,
-        'green season': 1,
-        'spring': 2,
-        'summer': 3,
-        'autumn': 4,
-        'fall': 4,
+        'summer': 1,
+        'autumn': 2,
+        'fall': 2,
+        'spring': 3,
+        'all year': 4,
+        'good': 4, // "Good" or "Green" usually implies all year or pleasant
+        'green': 4,
         'winter': 5,
         'cold': 5,
         'monsoon': 6,
@@ -655,11 +876,23 @@ function renderLocations() {
 
         let value;
         switch (sortBy) {
+            case 'favorites':
+                // Favorites first returns 1 for favorites, 0 for non-favorites
+                // With "first" (non-asc) order, it uses (not-fav - fav) = (0 - 1) = -1. Favs first.
+                value = isFavorite(itemName) ? 1 : 0;
+                break;
             case 'name':
                 value = (itemName || '').toLowerCase();
                 break;
             case 'cost':
-                value = parseCurrency(item[COL_MAP.loc.weeklyCost]) || 0;
+                const weeklyRaw = item[COL_MAP.loc.weeklyCost];
+                if (weeklyRaw) {
+                    value = parseCurrency(weeklyRaw) || 0;
+                } else {
+                    const monthlyTotal = parseCurrency(item[COL_MAP.loc.foodCost]) +
+                        parseCurrency(item[COL_MAP.loc.rentCost]);
+                    value = monthlyTotal > 0 ? (monthlyTotal / 4.33) : 0;
+                }
                 break;
             case 'visits':
                 value = visitCounts[itemName] || 0;
@@ -674,10 +907,8 @@ function renderLocations() {
                 value = lastVisited[itemName] ? lastVisited[itemName].getTime() : 0;
                 break;
             case 'season':
-                const seasonData = STATE.seasons.find(s =>
-                    s[COL_MAP.season.location] === itemName &&
-                    (s[COL_MAP.season.month] || '').includes(STATE.selectedMonth)
-                );
+                const country = item[COL_MAP.loc.country] || '';
+                const seasonData = getSeasonData(itemName, STATE.selectedMonth, country);
                 const quality = (seasonData ? seasonData[COL_MAP.season.quality] : 'unknown').toLowerCase();
                 let rank = 8;
                 for (const [key, r] of Object.entries(seasonRanking)) {
@@ -700,10 +931,12 @@ function renderLocations() {
 
         let result = 0;
         if (typeof aPrimary.value === 'number') {
-            result = aPrimary.order === 'asc' ? aPrimary.value - bPrimary.value : bPrimary.value - aPrimary.value;
+            const isAsc = aPrimary.order === 'asc' || aPrimary.order === 'quality';
+            result = isAsc ? aPrimary.value - bPrimary.value : bPrimary.value - aPrimary.value;
         } else {
-            if (aPrimary.value < bPrimary.value) result = aPrimary.order === 'asc' ? -1 : 1;
-            else if (aPrimary.value > bPrimary.value) result = aPrimary.order === 'asc' ? 1 : -1;
+            const isAsc = aPrimary.order === 'asc' || aPrimary.order === 'quality';
+            if (aPrimary.value < bPrimary.value) result = isAsc ? -1 : 1;
+            else if (aPrimary.value > bPrimary.value) result = isAsc ? 1 : -1;
         }
 
         // If primary sort values are equal and secondary sort is set, use secondary sort
@@ -712,10 +945,12 @@ function renderLocations() {
             const bSecondary = getSortValue(b, secondarySortValue);
 
             if (typeof aSecondary.value === 'number') {
-                result = aSecondary.order === 'asc' ? aSecondary.value - bSecondary.value : bSecondary.value - aSecondary.value;
+                const isAsc = aSecondary.order === 'asc' || aSecondary.order === 'quality';
+                result = isAsc ? aSecondary.value - bSecondary.value : bSecondary.value - aSecondary.value;
             } else {
-                if (aSecondary.value < bSecondary.value) result = aSecondary.order === 'asc' ? -1 : 1;
-                else if (aSecondary.value > bSecondary.value) result = aSecondary.order === 'asc' ? 1 : -1;
+                const isAsc = aSecondary.order === 'asc' || aSecondary.order === 'quality';
+                if (aSecondary.value < bSecondary.value) result = isAsc ? -1 : 1;
+                else if (aSecondary.value > bSecondary.value) result = isAsc ? 1 : -1;
             }
         }
 
@@ -732,17 +967,27 @@ function renderLocations() {
         const tags = item[COL_MAP.loc.tags];
         const currency = item[COL_MAP.loc.currency] || '';
         const currencySymbol = getCurrencySymbol(currency);
-        const weeklyCost = item[COL_MAP.loc.weeklyCost] || '';
-        const foodCost = item[COL_MAP.loc.foodCost] || '';
-        const rentCost = item[COL_MAP.loc.rentCost] || '';
+        const weeklyCostVal = item[COL_MAP.loc.weeklyCost];
+        const foodCostVal = item[COL_MAP.loc.foodCost] || '0';
+        const rentCostVal = item[COL_MAP.loc.rentCost] || '0';
+        const otherCostVal = item['OtherCost'] || '0';
+
+        let weeklyCost;
+        if (weeklyCostVal) {
+            weeklyCost = weeklyCostVal;
+        } else {
+            // Calculate weekly from monthly (Rent + Food) / 4.33
+            const monthlyTotal = parseCurrency(foodCostVal) + parseCurrency(rentCostVal);
+            weeklyCost = monthlyTotal > 0 ? (monthlyTotal / 4.33).toFixed(0) : '';
+        }
+
+        const foodCost = foodCostVal;
+        const rentCost = rentCostVal;
         const visits = visitCounts[name] || 0;
         const visaRegion = getVisaRegion(country, schengen);
 
-        // Look up season data for current selected month
-        const seasonData = STATE.seasons.find(s =>
-            s[COL_MAP.season.location] === name &&
-            (s[COL_MAP.season.month] || '').includes(STATE.selectedMonth)
-        );
+        // Look up season data for current selected month (with country fallback)
+        const seasonData = getSeasonData(name, STATE.selectedMonth, country);
         const seasonQuality = seasonData ? seasonData[COL_MAP.season.quality] : null;
 
         // Determine season color class
@@ -830,8 +1075,8 @@ function renderLocations() {
             window.location.href = `location.html?name=${encodeURIComponent(name)}`;
         };
 
-        const favoriteIcon = isFavorite(name) ? '⭐' : '☆';
-        const favoriteColor = isFavorite(name) ? '#f59e0b' : '#6b7280';
+        const favoriteIcon = '♥';
+        const favoriteColor = isFavorite(name) ? '#f43f5e' : 'rgba(148, 163, 184, 0.3)';
 
         card.innerHTML = `
             <div class="card-header">
@@ -839,7 +1084,7 @@ function renderLocations() {
                     <div class="card-title">
                         ${name}
                         <button onclick="event.stopPropagation(); toggleFavorite('${name.replace(/'/g, "\\'")}')"
-                            style="background: none; border: none; cursor: pointer; font-size: 1.2rem; margin-left: 0.5rem; color: ${favoriteColor}; padding: 0; line-height: 1;"
+                            style="background: none; border: none; cursor: pointer; font-size: 1.4rem; margin-left: 0.5rem; color: ${favoriteColor}; padding: 0; line-height: 1; transition: color 0.2s;"
                             title="${isFavorite(name) ? 'Remove from favorites' : 'Add to favorites'}">
                             ${favoriteIcon}
                         </button>
@@ -877,9 +1122,36 @@ function selectMonth(month) {
         }
     });
 
+    // Display events for this month
+    displayMonthEvents(month);
+
     // Re-render both locations and seasons to show updated season data
     renderLocations();
     renderSeasons();
+}
+
+// Display events for the selected month
+function displayMonthEvents(month) {
+    const eventsDisplay = document.getElementById('month-events-display');
+    const eventsText = document.getElementById('events-text');
+
+    if (!eventsDisplay || !eventsText || !STATE.events || STATE.events.length === 0) {
+        if (eventsDisplay) eventsDisplay.style.display = 'none';
+        return;
+    }
+
+    // Find events for this month
+    const monthData = STATE.events.find(e => e.month === month);
+
+    if (!monthData || !monthData.events || monthData.events.length === 0) {
+        eventsDisplay.style.display = 'none';
+        return;
+    }
+
+    // Display events
+    const eventsList = monthData.events.join(', ');
+    eventsText.textContent = `${month} events: ${eventsList}`;
+    eventsDisplay.style.display = 'block';
 }
 
 function renderSeasons() {
@@ -1297,7 +1569,6 @@ function loadConfig() {
     renderPassportList();
     renderUserInterestsList();
     renderUserLanguagesList();
-    renderMedicationsList();
 
     // Load interests
     renderInterestsList();
@@ -1576,6 +1847,15 @@ function addUserLanguage() {
 
     // Refresh list
     renderUserLanguagesList();
+
+    // Automatically add to language favorites
+    const favs = getFilterFavs();
+    if (!favs.languages.includes(language)) {
+        favs.languages.push(language);
+        saveFilterFavs(favs);
+        populateFilters();
+    }
+
     showMessage('Language added successfully', 'success');
 }
 
@@ -1587,66 +1867,35 @@ function removeUserLanguage(index) {
     showMessage('Language removed', 'success');
 }
 
-// Medications functions
-function getUserMedications() {
-    const medicationsStr = localStorage.getItem('userMedications');
-    return medicationsStr ? JSON.parse(medicationsStr) : [];
-}
+// Medication functions - Search only
+function searchMedicationRequirements() {
+    const input = document.getElementById('medication-search-input');
+    const resultDiv = document.getElementById('medication-search-results');
+    if (!input || !resultDiv) return;
 
-function saveMedications(medications) {
-    localStorage.setItem('userMedications', JSON.stringify(medications));
-}
-
-function renderMedicationsList() {
-    const listDiv = document.getElementById('medications-list');
-    if (!listDiv) return;
-
-    const medications = getUserMedications();
-
-    if (medications.length === 0) {
-        listDiv.innerHTML = '<p style="color: var(--text-secondary); font-size: 0.9rem;">No medications added yet</p>';
+    const query = input.value.trim().toLowerCase();
+    if (!query) {
+        resultDiv.innerHTML = '';
+        resultDiv.style.display = 'none';
         return;
     }
 
-    listDiv.innerHTML = medications.map((med, index) => `
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; margin-bottom: 0.5rem; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px;">
-            <span style="color: var(--text-primary);">${med}</span>
-            <button onclick="removeMedication(${index})" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 0.4rem 0.75rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
-                Remove
-            </button>
+    // Placeholder results
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = `
+        <div style="padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px;">
+            <div style="font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Results for: "${query}"</div>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem;">
+                General Pharmaceutical Travel Rules:
+            </p>
+            <ul style="color: var(--text-secondary); font-size: 0.85rem; padding-left: 1.2rem; margin: 0;">
+                <li>Always carry a copy of your prescription.</li>
+                <li>Keep medications in their original packaging.</li>
+                <li>Check the "Entry Requirements" tab for specific country bans on certain stimulants or painkillers.</li>
+                <li>For specific results, please consult the embassy website of your destination country.</li>
+            </ul>
         </div>
-    `).join('');
-}
-
-function addMedication() {
-    const input = document.getElementById('new-medication-input');
-    if (!input) return;
-
-    const medication = input.value.trim();
-    if (!medication) {
-        showMessage('Please enter a medication name', 'warning');
-        return;
-    }
-
-    const medications = getUserMedications();
-    if (medications.includes(medication)) {
-        showMessage('This medication is already in your list', 'warning');
-        return;
-    }
-
-    medications.push(medication);
-    saveMedications(medications);
-    renderMedicationsList();
-    input.value = '';
-    showMessage('Medication added', 'success');
-}
-
-function removeMedication(index) {
-    const medications = getUserMedications();
-    medications.splice(index, 1);
-    saveMedications(medications);
-    renderMedicationsList();
-    showMessage('Medication removed', 'success');
+    `;
 }
 
 function saveSettings() {
@@ -1925,7 +2174,7 @@ function loadFinances() {
         updateTransportBudgetLabel(transportBudgetPeriod);
 
         // Add event listener for period changes
-        transportBudgetPeriodSelect.addEventListener('change', function() {
+        transportBudgetPeriodSelect.addEventListener('change', function () {
             updateTransportBudgetLabel(this.value);
         });
     }
@@ -1937,7 +2186,7 @@ function updateTransportBudgetLabel(period) {
     const label = document.getElementById('transport-budget-label');
     if (!label) return;
 
-    switch(period) {
+    switch (period) {
         case 'weekly':
             label.textContent = 'Weekly Transport Budget';
             break;
@@ -2096,13 +2345,13 @@ function generateReport() {
             </div>
             <h4 style="color: var(--text-primary); margin-bottom: 1rem;">Top Locations</h4>
             <div style="margin-bottom: 2rem;">${sortedLocations.map(([location, weeks]) =>
-                `<div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(100, 116, 139, 0.2);">
+        `<div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(100, 116, 139, 0.2);">
                     <span style="color: var(--text-primary);">${location}</span>
                     <span style="color: var(--accent-color); font-weight: 600;">${weeks} week${weeks > 1 ? 's' : ''}</span>
                 </div>`).join('')}</div>
             <h4 style="color: var(--text-primary); margin-bottom: 1rem;">Countries Visited</h4>
             <div style="margin-bottom: 2rem;">${sortedCountries.map(([country, weeks]) =>
-                `<div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(100, 116, 139, 0.2);">
+            `<div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(100, 116, 139, 0.2);">
                     <span style="color: var(--text-primary);">${country}</span>
                     <span style="color: var(--accent-color); font-weight: 600;">${weeks} week${weeks > 1 ? 's' : ''}</span>
                 </div>`).join('')}</div>
@@ -2315,10 +2564,10 @@ function renderPackingList() {
     let html = `
         <div style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px;">
             <div style="color: var(--text-primary); font-size: 1.1rem; font-weight: 600;">
-                Progress: ${packedCount} / ${totalCount} items packed (${Math.round((packedCount/totalCount)*100)}%)
+                Progress: ${packedCount} / ${totalCount} items packed (${Math.round((packedCount / totalCount) * 100)}%)
             </div>
             <div style="margin-top: 0.5rem; height: 8px; background: rgba(100, 116, 139, 0.2); border-radius: 4px; overflow: hidden;">
-                <div style="height: 100%; background: var(--accent-color); width: ${(packedCount/totalCount)*100}%; transition: width 0.3s;"></div>
+                <div style="height: 100%; background: var(--accent-color); width: ${(packedCount / totalCount) * 100}%; transition: width 0.3s;"></div>
             </div>
         </div>
     `;
@@ -2453,8 +2702,8 @@ function renderFriendsList() {
         const dateRange = friend.startDate && friend.endDate
             ? `${formatDate(friend.startDate)} - ${formatDate(friend.endDate)}`
             : friend.startDate
-            ? `From ${formatDate(friend.startDate)}`
-            : 'No dates specified';
+                ? `From ${formatDate(friend.startDate)}`
+                : 'No dates specified';
 
         return `
             <div style="padding: 1.25rem; margin-bottom: 1rem; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px;">
@@ -2809,15 +3058,30 @@ function processSmartQuery() {
         maxFoodCost: null
     };
 
-    // Detect sports
-    const sports = ['wakeboarding', 'surfing', 'skiing', 'snowboarding', 'kitesurfing', 'diving', 'climbing'];
-    for (const sport of sports) {
-        if (query.includes(sport)) {
-            STATE.filters.sport = sport.charAt(0).toUpperCase() + sport.slice(1);
-            document.getElementById('sport-filter').value = STATE.filters.sport;
-            filtersApplied.push(`Sport: ${STATE.filters.sport}`);
-            break;
+    // Detect sports with synonyms
+    const sportSynonyms = {
+        'Wakeboarding': ['wakeboard', 'wake', 'cable'],
+        'Surfing': ['surf', 'surfing'],
+        'Skiing': ['ski', 'skiing'],
+        'Snowboarding': ['snowboard', 'snowboarding'],
+        'Kitesurfing': ['kite', 'kitesurfing', 'kitesurf'],
+        'Diving': ['dive', 'diving', 'scuba'],
+        'Climbing': ['climb', 'climbing', 'bouldering'],
+        'Volleyball': ['volley', 'volleyball', 'vb']
+    };
+
+    let sportFound = false;
+    for (const [sport, synonyms] of Object.entries(sportSynonyms)) {
+        for (const synonym of synonyms) {
+            if (query.includes(synonym)) {
+                STATE.filters.sport = sport;
+                document.getElementById('sport-filter').value = sport;
+                filtersApplied.push(`Sport: ${sport}`);
+                sportFound = true;
+                break;
+            }
         }
+        if (sportFound) break;
     }
 
     // Detect continents/regions
@@ -2969,6 +3233,8 @@ function clearAllFilters() {
     document.getElementById('min-food-cost').value = '';
     const favCheckbox = document.getElementById('favorites-filter');
     if (favCheckbox) favCheckbox.checked = false;
+    const favLabel = document.getElementById('favorites-label');
+    if (favLabel) favLabel.style.color = 'rgba(148, 163, 184, 0.3)';
     document.getElementById('max-food-cost').value = '';
 
     const countrySelect = document.getElementById('country-filter');

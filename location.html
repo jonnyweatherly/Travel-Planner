@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,26 +11,40 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
-    <!-- Top Navigation Bar -->
     <nav class="top-navbar">
         <div class="navbar-logo">
-            <h2><a href="index.html" style="text-decoration: none; color: inherit;">Nomad<span class="highlight">Plan</span></a></h2>
+            <h2><a href="index.html" style="text-decoration: none; color: inherit;">Nomad<span
+                        class="highlight">Plan</span></a></h2>
         </div>
         <ul class="navbar-nav-links">
-            <li data-view="locations" onclick="window.location.href='index.html'">
+            <li data-view="locations" onclick="window.location.href='index.html?view=locations'">
                 <span class="icon">🌍</span> Explore
             </li>
-            <li data-view="timeline" onclick="window.location.href='index.html#timeline'">
+            <li data-view="timeline" onclick="window.location.href='index.html?view=timeline'">
                 <span class="icon">📅</span> Timeline
             </li>
-            <li data-view="config" onclick="window.location.href='index.html#config'">
+            <li data-view="reports" onclick="window.location.href='index.html?view=reports'">
+                <span class="icon">📊</span> Reports
+            </li>
+            <li data-view="packing" onclick="window.location.href='index.html?view=packing'">
+                <span class="icon">🎒</span> Packing
+            </li>
+            <li data-view="todo" onclick="window.location.href='index.html?view=todo'">
+                <span class="icon">✓</span> To-Do
+            </li>
+            <li data-view="friends" onclick="window.location.href='index.html?view=friends'">
+                <span class="icon">👥</span> Friends & Family
+            </li>
+            <li data-view="finances" onclick="window.location.href='index.html?view=finances'">
+                <span class="icon">💰</span> Finances
+            </li>
+            <li data-view="config" onclick="window.location.href='index.html?view=config'">
                 <span class="icon">⚙️</span> Configuration
             </li>
         </ul>
-        <button class="back-btn" onclick="window.history.back()" style="margin-left: auto; padding: 0.5rem 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--accent-color); border-radius: 6px; cursor: pointer; font-size: 0.9rem; white-space: nowrap;">
-            ← Back
-        </button>
+
     </nav>
 
     <div class="app-container" style="height: calc(100vh - 60px);">
@@ -50,4 +65,5 @@
 
     <script src="location.js?v=2"></script>
 </body>
+
 </html>

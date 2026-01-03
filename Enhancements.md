@@ -5,25 +5,21 @@
 
 ## Immediate Goals
 - Custom text-based query tool? (e.g. "Good places for wakeboarding that speak english") - Request from Paul. Add to top of explore page. Might need to send to AI, with some data about the table structure, and user preferences, to design a custom query, then reflect that in the UI.
-- Make dates for budgets optional, so basic users can set them without confirming dates
-- Add metric vs imperial toggle to configuration page
-- Move the search bar to the top of the explore page, below the "Explore Destinations" heading and subheading.
 - Add a toggle to set travel budget as being per week, per month, or per year when inputting the data.
-- Rename "travel budget" to "transport budget"
 - Remove AI search from all pages except Explore Destinations
+- Allow the Transport budget to have start and end dates, using same widget construction as Annual Budget
 - Add expense tracking so people can better estimate costs for themselves in specific locations?
 - Add an experience wishlist brainstorm chatbot?
-- Add "favourite” tags to all filter lists
-- Add medicine rules for each country (E.g. what can you bring in, how much, etc)
-- Have users add their current medications in config page.
-- Add fuzzy search to all filter lists
+- Add a search bar for medicine rules for each country (E.g. what can you bring in, how much, etc), with no information storage
 - Add start and end dates for transport budget
-- All forms should submit on press "enter"
-- Add dosing (with dose unit dropdown) and prescription end date (optional) to medication list
-- Add a "favourites" tag to the sort list (just puts favs first)
-- Change "favourite" star to a heart - Minimal colour design if possible
-
-
+- Add fuzzy search to the AI search bar (when using Non-AI functionality) - So that results update as letters are entered
+- If user searches an interest in interest filter and presses Control+enter, add that interest to the interest list
+- Allow user to define their own events data, then display it in the events widget on the "explore page". Add an events tab to the top navigation bar.
+- Allow user to favourite items in filters, such as languages, visas.
+- Automatically add spoken languages to language favourites.
+- Allow user to list current visas held in configuration.
+- Allow user to tag items in packing list as "favorite" and display them in a separate list.
+- Allow user to tag items in packing list as "to buy" and display them in a separate list.
 
 ## Stretch Goals
 - Add Nomad Visa requirements list via API
@@ -33,9 +29,11 @@
 - AI can suggest actions/links?
 - List of things like taxi /uber services, food delivery, etc per country.
 - Add travel-visa API?
+- User can request a packing list based on an itinerary of locations (implement after itinerary planner)
 
 ## Monetisation
 - Add booking etc and swap to https://duffel.com/pricing
+    Requires business email
 - Add safetywing referral program (Travel Insurance)
 - Add finance tool referrals (Wise, Revolut, etc)
 - Add locations for tax purposes? (E.g. US States)

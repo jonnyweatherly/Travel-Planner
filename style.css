@@ -11,6 +11,13 @@
     --warning-color: #f59e0b;
     --border-color: rgba(255, 255, 255, 0.1);
     --font-main: 'Outfit', sans-serif;
+    --nav-height: 50px;
+    /* Reduced from 60px */
+}
+
+html {
+    font-size: 70%;
+    /* Shrink all rem-based elements by 30% */
 }
 
 * {
@@ -30,7 +37,7 @@ body {
 /* Top Navigation Bar */
 .top-navbar {
     width: 100%;
-    height: 60px;
+    height: var(--nav-height);
     background: var(--sidebar-bg);
     border-bottom: 1px solid var(--accent-color);
     display: flex;
@@ -92,13 +99,14 @@ body {
 
 .app-container {
     display: flex;
-    height: calc(100vh - 60px);
+    height: calc(100vh - var(--nav-height));
     overflow: hidden;
 }
 
 /* Filters Sidebar */
 .filters-sidebar {
-    width: 260px;
+    width: 200px;
+    /* Reduced from 260px */
     background-color: var(--sidebar-bg);
     padding: 1.5rem 1rem;
     display: flex;
@@ -111,29 +119,48 @@ body {
     color: var(--accent-color);
 }
 
-.filters-panel {
-    width: 100%;
-    scrollbar-width: thin;
-    scrollbar-color: var(--accent-color) var(--sidebar-bg);
-}
-
-/* Webkit scrollbar styling for filters panel */
-.filters-panel::-webkit-scrollbar {
+/* Global Scrollbar Styling */
+::-webkit-scrollbar {
     width: 6px;
+    height: 6px;
 }
 
-.filters-panel::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
+    background: var(--bg-color);
+}
+
+.filters-sidebar::-webkit-scrollbar-track,
+.filters-panel::-webkit-scrollbar-track,
+select[multiple]::-webkit-scrollbar-track {
     background: var(--sidebar-bg);
 }
 
-.filters-panel::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
     background: var(--accent-color);
-    border-radius: 3px;
+    border-radius: 10px;
+    opacity: 0.5;
 }
 
-.filters-panel::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover {
     background: var(--accent-glow);
 }
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-color) transparent;
+}
+
+.filters-panel,
+.filters-sidebar,
+select[multiple] {
+    scrollbar-color: var(--accent-color) var(--sidebar-bg);
+}
+
+.filters-panel {
+    width: 100%;
+}
+
 
 .filters-panel h3 {
     margin-bottom: 1rem;
@@ -203,7 +230,8 @@ body {
     margin-bottom: 0.3rem;
 }
 
-select, input[type="number"] {
+select,
+input[type="number"] {
     width: 100%;
     padding: 0.5rem;
     background-color: var(--bg-color);
@@ -245,11 +273,13 @@ select:focus {
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
+    appearance: none;
     margin: 0;
 }
 
 input[type="number"] {
     -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 .filter-toggle {
@@ -258,6 +288,23 @@ input[type="number"] {
     gap: 10px;
     font-size: 0.9rem;
     cursor: pointer;
+}
+
+.fav-filter-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 2px 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    opacity: 0.5;
+}
+
+.fav-filter-btn:hover {
+    opacity: 1;
+    background: rgba(244, 63, 94, 0.1);
+    transform: scale(1.1);
 }
 
 /* Main Content */
@@ -359,6 +406,8 @@ header {
 .sort-controls label {
     font-size: 0.9rem;
     color: var(--text-secondary);
+    white-space: nowrap;
+    min-width: 70px;
 }
 
 .sort-controls select {
@@ -368,7 +417,8 @@ header {
 /* Grid Layout */
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    /* Reduced from 280px */
     gap: 1.5rem;
     padding-bottom: 2rem;
 }
@@ -938,8 +988,14 @@ header {
     transform: translateX(5px);
     border-left-color: var(--text-primary);
 }
+
 /* Loading spinner animation */
 @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }

@@ -28,11 +28,11 @@
             <li data-view="reports" onclick="switchView('reports')">
                 <span class="icon">📊</span> Reports
             </li>
-            <li data-view="todo" onclick="switchView('todo')">
-                <span class="icon">✓</span> To-Do
-            </li>
             <li data-view="packing" onclick="switchView('packing')">
                 <span class="icon">🎒</span> Packing
+            </li>
+            <li data-view="todo" onclick="switchView('todo')">
+                <span class="icon">✓</span> To-Do
             </li>
             <li data-view="friends" onclick="switchView('friends')">
                 <span class="icon">👥</span> Friends & Family
@@ -64,7 +64,9 @@
                     <label style="display: flex; align-items: center; cursor: pointer; margin: 0;">
                         <input type="checkbox" id="favorites-filter" onchange="toggleFavoritesFilter()"
                             style="margin-right: 0.5rem; width: 18px; height: 18px; cursor: pointer;">
-                        <span style="color: #f59e0b; font-weight: 600;">★ Show Favorites Only</span>
+                        <span id="favorites-label"
+                            style="color: rgba(148, 163, 184, 0.3); font-weight: 600; transition: color 0.2s;">♥ Show
+                            Favorites Only</span>
                     </label>
                 </div>
 
@@ -110,14 +112,21 @@
                             </select>
                         </div>
                         <div class="filter-group">
-                            <label>Season Quality</label>
+                            <label>Season</label>
                             <select id="season-filter" onchange="renderCurrentView()">
                                 <option value="all">All Seasons</option>
                                 <!-- Populated by JS -->
                             </select>
                         </div>
                         <div class="filter-group">
-                            <label>Languages</label>
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
+                                <label style="margin: 0;">Languages</label>
+                                <button onclick="toggleFavSelected('languages', 'language-filter')"
+                                    class="fav-filter-btn" title="Toggle favorite for selected languages">
+                                    ❤️
+                                </button>
+                            </div>
                             <input type="text" id="language-search" placeholder="Search languages..."
                                 oninput="filterSelectOptions('language-filter', 'language-search')"
                                 style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); font-size: 0.9rem;" />
@@ -130,6 +139,7 @@
                             <label>Interests</label>
                             <input type="text" id="interests-search" placeholder="Search interests..."
                                 oninput="filterSelectOptions('interests-filter', 'interests-search')"
+                                onkeydown="handleInterestSearchKey(event)"
                                 style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); font-size: 0.9rem;" />
                             <select id="interests-filter" multiple size="5" onchange="renderCurrentView()">
                                 <!-- Populated by JS -->
@@ -147,7 +157,14 @@
                     </div>
                     <div class="filter-category-content active">
                         <div class="filter-group">
-                            <label>Visa Region</label>
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
+                                <label style="margin: 0;">Visa Region</label>
+                                <button onclick="toggleFavSelected('visaRegions', 'visa-filter')" class="fav-filter-btn"
+                                    title="Toggle favorite for selected regions">
+                                    ❤️
+                                </button>
+                            </div>
                             <select id="visa-filter" onchange="renderCurrentView()">
                                 <option value="all">All Visa Regions</option>
                                 <!-- Populated by JS -->
@@ -193,35 +210,38 @@
             <header>
                 <div class="header-text">
                     <h1 id="page-title">Explore Destinations</h1>
-                    <p id="page-subtitle">Find your next adventure.</p>
                 </div>
             </header>
 
             <!-- Views -->
             <div id="view-locations" class="view-section active">
                 <!-- AI-Powered Smart Search Bar -->
-                <div style="padding: 0rem;">
-                    <div class="search-bar" style="position: relative; width: 90%;">
+                <div style="padding: 0rem; width: 100%; margin-bottom: 1rem;">
+                    <div class="search-bar" style="position: relative; width: 100%; max-width: 1200px;">
                         <input type="text" id="search-input"
                             placeholder="🤖 AI-Powered Search - Try: 'Affordable wakeboarding destinations in Asia that speak English'"
-                            onkeyup="handleSmartSearch(event)" style="padding-right: 10rem;">
-                        <button onclick="processAIQuery()" id="ai-search-btn"
-                            style="position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid rgba(147, 51, 234, 0.3); background: rgba(147, 51, 234, 0.1); color: #9333ea; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
-                            🤖 AI Search
-                        </button>
-                        <button onclick="clearAllFilters()"
-                            style="position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-secondary); cursor: pointer; font-size: 0.85rem;">
-                            Clear
-                        </button>
+                            onkeyup="handleSmartSearch(event)"
+                            style="padding-right: 14rem; width: 100%; border-radius: 50px;">
+                        <div
+                            style="position: absolute; right: 0.25rem; top: 50%; transform: translateY(-50%); display: flex; gap: 0.5rem; align-items: center;">
+                            <button onclick="clearAllFilters()"
+                                style="padding: 0.5rem 1rem; border-radius: 50px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-secondary); cursor: pointer; font-size: 0.85rem; white-space: nowrap;">
+                                Clear
+                            </button>
+                            <button onclick="processAIQuery()" id="ai-search-btn"
+                                style="padding: 0.5rem 1rem; border-radius: 50px; border: 1px solid rgba(147, 51, 234, 0.3); background: rgba(147, 51, 234, 0.1); color: #9333ea; cursor: pointer; font-size: 0.85rem; font-weight: 600; white-space: nowrap;">
+                                🤖 AI Search
+                            </button>
+                        </div>
                     </div>
 
                     <div id="smart-query-feedback"
-                        style="margin-top: 0.5rem; padding: 0.5rem; border-radius: 6px; display: none; font-size: 0.9rem; width: 66%;">
+                        style="margin-top: 0.5rem; padding: 0.5rem; border-radius: 6px; display: none; font-size: 0.9rem; width: 100%; max-width: 1200px;">
                     </div>
                 </div>
 
                 <div class="fixed-controls">
-                    <div class="controls-row">
+                    <div class="controls-row" style="flex-direction: column; align-items: stretch; gap: 1rem;">
                         <div class="month-controls">
                             <div class="month-buttons">
                                 <button class="month-btn active" data-month="Jan"
@@ -239,14 +259,25 @@
                                 <button class="month-btn" data-month="Dec" onclick="selectMonth('Dec')">Dec</button>
                             </div>
                         </div>
+
+                        <!-- Events Display -->
+                        <div id="month-events-display"
+                            style="display: none; padding: 0.75rem 1rem; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 8px; margin-top: 0.5rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="font-size: 1.2rem;">📅</span>
+                                <span id="events-text" style="color: var(--text-primary); font-size: 0.9rem;"></span>
+                            </div>
+                        </div>
+
                         <div class="sort-controls">
-                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <div style="display: flex; flex-direction: row; gap: 1.5rem; flex-wrap: wrap;">
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                                     <label>Sort by:</label>
                                     <select id="sort-select" onchange="renderLocations()">
+                                        <option value="favorites-first">♥ Favorites First</option>
                                         <option value="name-asc">Name (A-Z)</option>
                                         <option value="name-desc">Name (Z-A)</option>
-                                        <option value="season-quality">Season Quality (Best First)</option>
+                                        <option value="season-quality">Season (Best First)</option>
                                         <option value="cost-asc">Cost (Low to High)</option>
                                         <option value="cost-desc">Cost (High to Low)</option>
                                         <option value="visits-desc">Most Visited</option>
@@ -263,9 +294,10 @@
                                     <label>Then by:</label>
                                     <select id="sort-select-secondary" onchange="renderLocations()">
                                         <option value="none">None</option>
+                                        <option value="favorites-first">♥ Favorites First</option>
                                         <option value="name-asc">Name (A-Z)</option>
                                         <option value="name-desc">Name (Z-A)</option>
-                                        <option value="season-quality">Season Quality (Best First)</option>
+                                        <option value="season-quality">Season (Best First)</option>
                                         <option value="cost-asc">Cost (Low to High)</option>
                                         <option value="cost-desc">Cost (High to Low)</option>
                                         <option value="visits-desc">Most Visited</option>
@@ -629,7 +661,8 @@
                                 <div class="filter-group">
                                     <label>Country</label>
                                     <input type="text" id="new-passport-country"
-                                        placeholder="e.g., Australia, United States" />
+                                        placeholder="e.g., Australia, United States"
+                                        onkeypress="if(event.key==='Enter') addPassport()" />
                                 </div>
                                 <div class="filter-group">
                                     <label>Passport Number</label>
@@ -669,72 +702,115 @@
                                 </div>
                                 <div class="filter-hint">Press Enter or click Add Interest</div>
                             </div>
-                        </div>
+                            <div class="detail-section" style="margin-top: 2rem;">
+                                <h2>Visas Held</h2>
+                                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">List the visas you
+                                    currently hold to easily identify destinations where you already have clearance.</p>
 
-                        <div class="detail-section" style="margin-top: 2rem;">
-                            <h2>Languages Spoken</h2>
-                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Add the languages you speak
-                                to help you find destinations where you can communicate easily.</p>
+                                <div id="user-visas-list"></div>
 
-                            <div id="user-languages-list"></div>
-
-                            <div
-                                style="margin-top: 1.5rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px;">
-                                <h3 style="margin-top: 0; color: var(--text-primary); font-size: 0.95rem;">Add Language
-                                </h3>
-                                <div style="display: flex; gap: 0.75rem;">
-                                    <input type="text" id="new-language-input"
-                                        placeholder="e.g., English, Spanish, Mandarin Chinese"
-                                        style="flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);"
-                                        onkeypress="if(event.key==='Enter') addUserLanguage()" />
-                                    <button class="location-link-btn" onclick="addUserLanguage()"
-                                        style="white-space: nowrap;">
-                                        Add Language
-                                    </button>
+                                <div
+                                    style="margin-top: 1.5rem; padding: 1rem; background: rgba(147, 51, 234, 0.1); border: 1px solid rgba(147, 51, 234, 0.3); border-radius: 6px;">
+                                    <h3 style="margin-top: 0; color: var(--text-primary); font-size: 0.95rem;">Add Visa
+                                    </h3>
+                                    <div style="display: flex; gap: 0.75rem;">
+                                        <input type="text" id="new-visa-input"
+                                            placeholder="e.g., Schengen Visa, US B1/B2, Bali Digital Nomad Visa"
+                                            style="flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);"
+                                            onkeypress="if(event.key==='Enter') addUserVisa()" />
+                                        <button class="location-link-btn" onclick="addUserVisa()"
+                                            style="white-space: nowrap; background: rgba(147, 51, 234, 0.2); border-color: rgba(147, 51, 234, 0.4); color: #c084fc;">
+                                            Add Visa
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="filter-hint">Press Enter or click Add Language</div>
                             </div>
-                        </div>
 
-                        <div class="detail-section" style="margin-top: 2rem;">
-                            <h2>Current Medications</h2>
-                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">List any medications you're
-                                currently taking to check country-specific restrictions</p>
+                            <div class="detail-section" style="margin-top: 2rem;">
+                                <h2>Favorite Filters</h2>
+                                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Your most frequently
+                                    used languages and visa regions for quick access.</p>
 
-                            <div id="medications-list"></div>
-
-                            <div
-                                style="margin-top: 1.5rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px;">
-                                <h3 style="margin-top: 0; color: var(--text-primary); font-size: 0.95rem;">Add
-                                    Medication
-                                </h3>
-                                <div style="display: flex; gap: 0.75rem;">
-                                    <input type="text" id="new-medication-input"
-                                        placeholder="e.g., Aspirin, Ibuprofen, Insulin"
-                                        style="flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);"
-                                        onkeypress="if(event.key==='Enter') addMedication()" />
-                                    <button class="location-link-btn" onclick="addMedication()"
-                                        style="white-space: nowrap;">
-                                        Add Medication
-                                    </button>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                    <div>
+                                        <h3
+                                            style="font-size: 1rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                                            ❤️ Languages</h3>
+                                        <div id="fav-languages-list"></div>
+                                    </div>
+                                    <div>
+                                        <h3
+                                            style="font-size: 1rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                                            ❤️ Visa Regions</h3>
+                                        <div id="fav-visaregions-list"></div>
+                                    </div>
                                 </div>
-                                <div class="filter-hint">Press Enter or click Add Medication</div>
                             </div>
-                        </div>
 
-                        <button class="location-link-btn" onclick="saveSettings()"
-                            style="margin-top: 2rem; width: 100%;">
-                            Save All Configuration
-                        </button>
-                        <div id="config-message"
-                            style="margin-top: 1rem; padding: 0.75rem; border-radius: 6px; display: none;"></div>
+                            <div class="detail-section" style="margin-top: 2rem;">
+                                <h2>Languages Spoken</h2>
+                                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Add the languages you
+                                    speak
+                                    to help you find destinations where you can communicate easily.</p>
+
+                                <div id="user-languages-list"></div>
+
+                                <div
+                                    style="margin-top: 1.5rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px;">
+                                    <h3 style="margin-top: 0; color: var(--text-primary); font-size: 0.95rem;">Add
+                                        Language
+                                    </h3>
+                                    <div style="display: flex; gap: 0.75rem;">
+                                        <input type="text" id="new-language-input"
+                                            placeholder="e.g., English, Spanish, Mandarin Chinese"
+                                            style="flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);"
+                                            onkeypress="if(event.key==='Enter') addUserLanguage()" />
+                                        <button class="location-link-btn" onclick="addUserLanguage()"
+                                            style="white-space: nowrap;">
+                                            Add Language
+                                        </button>
+                                    </div>
+                                    <div class="filter-hint">Press Enter or click Add Language</div>
+                                </div>
+                            </div>
+
+                            <div class="detail-section" style="margin-top: 2rem;">
+                                <h2>Medication Regulations</h2>
+                                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Search for medication
+                                    names
+                                    to
+                                    check general country-specific restrictions and travel requirements.</p>
+
+                                <div
+                                    style="margin-top: 1.5rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px;">
+                                    <h3 style="margin-top: 0; color: var(--text-primary); font-size: 0.95rem;">Search
+                                        Medication
+                                    </h3>
+                                    <div style="display: flex; gap: 0.75rem;">
+                                        <input type="text" id="medication-search-input"
+                                            placeholder="e.g., Codeine, Adderall, Insulin"
+                                            onkeyup="searchMedicationRequirements()"
+                                            style="flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                    </div>
+                                    <div id="medication-search-results" style="margin-top: 1rem; display: none;"></div>
+                                </div>
+                            </div>
+
+                            <button class="location-link-btn" onclick="saveSettings()"
+                                style="margin-top: 2rem; width: 100%;">
+                                Save All Configuration
+                            </button>
+                            <div id="config-message"
+                                style="margin-top: 1rem; padding: 0.75rem; border-radius: 6px; display: none;"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
         </main>
     </div>
 
-    <script src="app.js?v=29"></script>
+    <!-- Fuse.js for fuzzy search -->
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
+    <script src="app.js?v=32"></script>
 </body>
 
 </html>

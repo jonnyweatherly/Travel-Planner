@@ -1,0 +1,64 @@
+[
+  {
+    "month": "Jan",
+    "events": [
+      "NZ Summer"
+    ]
+  },
+  {
+    "month": "Feb",
+    "events": [
+      "ISO Audit, 14064"
+    ]
+  },
+  {
+    "month": "Mar",
+    "events": []
+  },
+  {
+    "month": "Apr",
+    "events": [
+      "ISO Audits 9001, 27001"
+    ]
+  },
+  {
+    "month": "May",
+    "events": []
+  },
+  {
+    "month": "Jun",
+    "events": []
+  },
+  {
+    "month": "Jul",
+    "events": []
+  },
+  {
+    "month": "Aug",
+    "events": [
+      "Harvest"
+    ]
+  },
+  {
+    "month": "Sep",
+    "events": [
+      "Harvest"
+    ]
+  },
+  {
+    "month": "Oct",
+    "events": [
+      "Harvest"
+    ]
+  },
+  {
+    "month": "Nov",
+    "events": []
+  },
+  {
+    "month": "Dec",
+    "events": [
+      "Family Birthdays"
+    ]
+  }
+]
