@@ -5,14 +5,6 @@
 
 ## Immediate Goals
 7. Custom text-based query tool? (e.g. "Good places for wakeboarding that speak english") - Request from Paul. Add to top of explore page. Might need to send to AI, with some data about the table structure, and user preferences, to design a custom query, then reflect that in the UI.
-8. Add "Annual Budget " to user config
-9. Show "Monthly Budget"/"Weekly Budget" based on annual Budget (with a toggle to switch between the two). 
-10. Cost per week on location cards should be coloured red if it exceeds the user's weekly budget, and orange if it is more than 80% of the budget.
-11. The sidebar navigation should be the same for all pages, and moved to the top of all pages, while keeping the filters on the sidebar to the left.
-12. Change name of "settings" page to "Configuration".
-13. Add "Clear All Filters" button to top of explore page.
-14. Add nameable "folders" for packing list items, to allow users to say which bag each item goes in.
-15. Break financial config out into a separate finances page.
 16. Set date ranges for budgets (to allow for pay rises etc)
 17. Allow users to set a "travel budget" for flights, trains, etc in the finances page.
 18. Allow user to set their main currency in the finances page. Display all conversions in that currency.
