@@ -1656,8 +1656,11 @@ function switchView(viewName) {
     document.querySelectorAll('.navbar-nav-links li').forEach(el => el.classList.remove('active'));
 
     // Show active
-    document.getElementById(`view-${viewName}`).classList.add('active');
-    document.querySelector(`.navbar-nav-links li[data-view="${viewName}"]`).classList.add('active');
+    const viewElement = document.getElementById(`view-${viewName}`);
+    const navElement = document.querySelector(`.navbar-nav-links li[data-view="${viewName}"]`);
+
+    if (viewElement) viewElement.classList.add('active');
+    if (navElement) navElement.classList.add('active');
 
     // Update Header
     const titles = {
@@ -1670,9 +1673,13 @@ function switchView(viewName) {
         'packing': 'Packing List',
         'friends': 'Friends & Family',
         'finances': 'Finances',
+        'insurance': 'Travel Insurance',
+        'shop': 'Travel Shop',
+        'logistics': 'Travel Logistics',
         'config': 'Settings'
     };
-    document.getElementById('page-title').textContent = titles[viewName];
+    const pageTitleElement = document.getElementById('page-title');
+    if (pageTitleElement) pageTitleElement.textContent = titles[viewName] || 'Travel Planner';
 
     // Initial Render call if needed (or just rely on init)
     if (viewName === 'seasons') renderSeasons();
@@ -1709,16 +1716,12 @@ function loadConfig() {
 
     // Load passports and other lists
     renderPassportList();
-    renderUserInterestsList();
     renderUserLanguagesList();
     renderPhoneNumbersList();
     renderTransportPaymentsList();
 
     // Load interests
     renderInterestsList();
-
-    // Load user languages
-    renderUserLanguagesList();
 }
 
 function renderPassportList() {

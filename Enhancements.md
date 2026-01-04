@@ -1,12 +1,15 @@
 # Enhancements Backlog
 
 ## Issues
-- 
+- Add submit on press enter to transport budget (Note to Claude - Can we make a generic pattern for this? I think all fields should submit on enter)
+- Move medication search from Configuration to the related medication item on the location details page
+
+## Error Logging
+- Update python error messages to specify which python file the error occurred in
+
 
 ## Immediate Goals
 - Custom text-based query tool? (e.g. "Good places for wakeboarding that speak english") - Request from Paul. Add to top of explore page. Might need to send to AI, with some data about the table structure, and user preferences, to design a custom query, then reflect that in the UI.
-- Add a toggle to set travel budget as being per week, per month, or per year when inputting the data.
-- Allow the Transport budget to have start and end dates, using same widget construction as Annual Budget
 - Write a planning document for an expense tracking so people can better estimate costs for themselves in specific locations
 - Write a planning document for an experience wishlist brainstorm chatbot
 - Add a search bar for medicine rules for each country (E.g. what can you bring in, how much, etc), with no information storage
