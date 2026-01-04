@@ -114,7 +114,7 @@ Choose one of the solutions above to re-enable AI search securely. For a simple 
 
 - **Why can't I just read .env from JavaScript?** - `.env` files only work in Node.js (server-side). Browsers can't access them.
 - **Why did GitHub block my push?** - GitHub detected an API key in your code and blocked it to protect you.
-- **Is my old API key compromised?** - Yes, you should **rotate your Anthropic API key** immediately in the Anthropic console.
+- **Is my old API key compromised?** - Yes, you should **rotate your Anthropic API key** immediately in the Anthropic console. - Done
 
 ---
 

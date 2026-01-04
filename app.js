@@ -216,7 +216,8 @@ const COL_MAP = {
         currency: 'Money',
         weeklyCost: 'WeekTotalAUD',
         foodCost: 'Food',
-        rentCost: 'RentLongTerm'
+        rentCost: 'RentLongTerm',
+        transport: 'Transport'
     },
     season: {
         location: 'Location',
@@ -285,6 +286,9 @@ async function init() {
         }
 
         console.log('Data Loaded:', STATE);
+
+        // Merge user events with default events
+        updateCombinedEvents();
 
         populateFilters();
         renderLocations();
@@ -1078,6 +1082,10 @@ function renderLocations() {
         const favoriteIcon = '♥';
         const favoriteColor = isFavorite(name) ? '#f43f5e' : 'rgba(148, 163, 184, 0.3)';
 
+        // Get transport payment method from localStorage overrides
+        const transportPayments = (typeof getTransportPayments === 'function') ? getTransportPayments() : {};
+        const transportPayment = transportPayments[name] || (item[COL_MAP.loc.transport]) || '';
+
         card.innerHTML = `
             <div class="card-header">
                 <div>
@@ -1099,6 +1107,7 @@ function renderLocations() {
                 ${flightCostDisplay ? `<div class="card-info">✈️ Flight: ~${flightCostDisplay}</div>` : ''}
                 ${monthlyRentCost ? `<div class="card-info">Rent: ${monthlyRentCost}/mo</div>` : ''}
                 ${monthlyFoodCost ? `<div class="card-info">Food: ${monthlyFoodCost}/mo</div>` : ''}
+                ${transportPayment ? `<div class="card-info">🚇 ${transportPayment}</div>` : ''}
                 ${visits > 0 ? `<div class="card-info visits">🏖️ ${visits} visit${visits > 1 ? 's' : ''}</div>` : ''}
                 ${lastVisitedDisplay ? `<div class="card-info">Last visited: ${lastVisitedDisplay}</div>` : ''}
             </div>
@@ -1152,6 +1161,137 @@ function displayMonthEvents(month) {
     const eventsList = monthData.events.join(', ');
     eventsText.textContent = `${month} events: ${eventsList}`;
     eventsDisplay.style.display = 'block';
+}
+
+// ===== USER EVENTS MANAGEMENT =====
+
+function getUserEvents() {
+    const eventsStr = localStorage.getItem('userEvents');
+    return eventsStr ? JSON.parse(eventsStr) : [];
+}
+
+function saveUserEvents(events) {
+    localStorage.setItem('userEvents', JSON.stringify(events));
+}
+
+function addUserEvent() {
+    const monthSelect = document.getElementById('new-event-month');
+    const nameInput = document.getElementById('new-event-name');
+
+    if (!monthSelect || !nameInput) return;
+
+    const month = monthSelect.value;
+    const name = nameInput.value.trim();
+
+    if (!name) {
+        showMessage('Please enter an event name', 'warning');
+        return;
+    }
+
+    const userEvents = getUserEvents();
+
+    // Add event
+    userEvents.push({
+        month: month,
+        name: name
+    });
+
+    saveUserEvents(userEvents);
+    nameInput.value = '';
+    renderUserEventsList();
+
+    // Update the events display on explore page
+    updateCombinedEvents();
+    displayMonthEvents(STATE.selectedMonth);
+
+    showMessage('Event added', 'success');
+}
+
+function removeUserEvent(index) {
+    const userEvents = getUserEvents();
+    userEvents.splice(index, 1);
+    saveUserEvents(userEvents);
+    renderUserEventsList();
+
+    // Update the events display
+    updateCombinedEvents();
+    displayMonthEvents(STATE.selectedMonth);
+
+    showMessage('Event removed', 'success');
+}
+
+function renderUserEventsList() {
+    const listDiv = document.getElementById('user-events-list');
+    if (!listDiv) return;
+
+    const userEvents = getUserEvents();
+
+    if (userEvents.length === 0) {
+        listDiv.innerHTML = '<p style="color: var(--text-secondary); font-style: italic;">No events added yet</p>';
+        return;
+    }
+
+    // Group events by month
+    const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const eventsByMonth = {};
+
+    userEvents.forEach((event, index) => {
+        if (!eventsByMonth[event.month]) {
+            eventsByMonth[event.month] = [];
+        }
+        eventsByMonth[event.month].push({ ...event, index });
+    });
+
+    let html = '';
+    monthOrder.forEach(month => {
+        if (eventsByMonth[month]) {
+            const monthName = {
+                'Jan': 'January', 'Feb': 'February', 'Mar': 'March', 'Apr': 'April',
+                'May': 'May', 'Jun': 'June', 'Jul': 'July', 'Aug': 'August',
+                'Sep': 'September', 'Oct': 'October', 'Nov': 'November', 'Dec': 'December'
+            }[month];
+
+            html += `
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="margin: 0 0 0.75rem 0; color: var(--accent-color); font-size: 1rem;">${monthName}</h4>
+                    ${eventsByMonth[month].map(event => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; margin-bottom: 0.5rem; background: var(--sidebar-bg); border-radius: 6px;">
+                            <span style="color: var(--text-primary);">${event.name}</span>
+                            <button onclick="removeUserEvent(${event.index})"
+                                style="padding: 0.5rem 1rem; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 4px; cursor: pointer; font-size: 0.85rem;">
+                                Remove
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+    });
+
+    listDiv.innerHTML = html;
+}
+
+function updateCombinedEvents() {
+    // Merge default events from events.json with user events
+    const userEvents = getUserEvents();
+    const defaultEvents = STATE.events || [];
+
+    // Create a deep copy of default events
+    const combined = defaultEvents.map(monthData => ({
+        month: monthData.month,
+        events: [...monthData.events]
+    }));
+
+    // Add user events to the combined array
+    userEvents.forEach(userEvent => {
+        const monthData = combined.find(m => m.month === userEvent.month);
+        if (monthData) {
+            monthData.events.push(userEvent.name);
+        }
+    });
+
+    // Update STATE.events with combined data
+    STATE.events = combined;
 }
 
 function renderSeasons() {
@@ -1524,6 +1664,7 @@ function switchView(viewName) {
         'locations': 'Explore Destinations',
         'seasons': 'Season Planner',
         'timeline': 'Trip History',
+        'events': 'Manage Events',
         'reports': 'Trip Reports',
         'todo': 'Travel To-Do List',
         'packing': 'Packing List',
@@ -1536,6 +1677,7 @@ function switchView(viewName) {
     // Initial Render call if needed (or just rely on init)
     if (viewName === 'seasons') renderSeasons();
     if (viewName === 'timeline') renderTimeline();
+    if (viewName === 'events') renderUserEventsList();
     if (viewName === 'todo') renderTodoList();
     if (viewName === 'packing') {
         renderPackingFolderSelect();
@@ -1569,6 +1711,8 @@ function loadConfig() {
     renderPassportList();
     renderUserInterestsList();
     renderUserLanguagesList();
+    renderPhoneNumbersList();
+    renderTransportPaymentsList();
 
     // Load interests
     renderInterestsList();
@@ -1867,6 +2011,185 @@ function removeUserLanguage(index) {
     showMessage('Language removed', 'success');
 }
 
+// ===== PHONE NUMBER MANAGEMENT =====
+
+function getPhoneNumbers() {
+    const phonesStr = localStorage.getItem('phoneNumbers');
+    return phonesStr ? JSON.parse(phonesStr) : [];
+}
+
+function savePhoneNumbers(phones) {
+    localStorage.setItem('phoneNumbers', JSON.stringify(phones));
+}
+
+function addPhoneNumber() {
+    const countryInput = document.getElementById('new-phone-country');
+    const numberInput = document.getElementById('new-phone-number');
+    const pinInput = document.getElementById('new-phone-pin');
+    const expiryInput = document.getElementById('new-phone-expiry');
+
+    if (!countryInput || !numberInput) return;
+
+    const country = countryInput.value.trim();
+    const number = numberInput.value.trim();
+    const pin = pinInput ? pinInput.value.trim() : '';
+    const expiry = expiryInput ? expiryInput.value : '';
+
+    if (!country || !number) {
+        showMessage('Please enter both country and phone number', 'warning');
+        return;
+    }
+
+    const phones = getPhoneNumbers();
+    phones.push({
+        country: country,
+        number: number,
+        pin: pin,
+        expiry: expiry
+    });
+
+    savePhoneNumbers(phones);
+
+    // Clear inputs
+    countryInput.value = '';
+    numberInput.value = '';
+    if (pinInput) pinInput.value = '';
+    if (expiryInput) expiryInput.value = '';
+
+    renderPhoneNumbersList();
+    showMessage('Phone number added', 'success');
+}
+
+function removePhoneNumber(index) {
+    const phones = getPhoneNumbers();
+    phones.splice(index, 1);
+    savePhoneNumbers(phones);
+    renderPhoneNumbersList();
+    showMessage('Phone number removed', 'success');
+}
+
+function renderPhoneNumbersList() {
+    const listDiv = document.getElementById('phone-numbers-list');
+    if (!listDiv) return;
+
+    const phones = getPhoneNumbers();
+
+    if (phones.length === 0) {
+        listDiv.innerHTML = '<p style="color: var(--text-secondary); font-style: italic;">No phone numbers added yet</p>';
+        return;
+    }
+
+    listDiv.innerHTML = phones.map((phone, index) => {
+        const expiryDate = phone.expiry ? new Date(phone.expiry) : null;
+        const isExpired = expiryDate && expiryDate < new Date();
+        const expiryDisplay = phone.expiry ? `Expires: ${new Date(phone.expiry).toLocaleDateString()}` : 'No expiry';
+        const expiryColor = isExpired ? '#ef4444' : 'var(--text-secondary)';
+
+        return `
+            <div style="padding: 1rem; margin-bottom: 0.75rem; background: var(--sidebar-bg); border-radius: 8px; border: 1px solid ${isExpired ? 'rgba(239, 68, 68, 0.3)' : 'var(--border-color)'};">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                    <div style="flex: 1;">
+                        <div style="color: var(--accent-color); font-weight: 600; margin-bottom: 0.25rem;">${phone.country}</div>
+                        <div style="color: var(--text-primary); font-size: 1.05rem; margin-bottom: 0.25rem;">${phone.number}</div>
+                        ${phone.pin ? `<div style="color: var(--text-secondary); font-size: 0.85rem;">PIN: ${phone.pin}</div>` : ''}
+                        <div style="color: ${expiryColor}; font-size: 0.85rem; margin-top: 0.25rem;">${expiryDisplay}</div>
+                    </div>
+                    <button onclick="removePhoneNumber(${index})"
+                        style="padding: 0.5rem 1rem; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 4px; cursor: pointer; font-size: 0.85rem;">
+                        Remove
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ===== TRANSPORT PAYMENT MANAGEMENT =====
+
+function getTransportPayments() {
+    const paymentsStr = localStorage.getItem('transportPayments');
+    return paymentsStr ? JSON.parse(paymentsStr) : {};
+}
+
+function saveTransportPayments(payments) {
+    localStorage.setItem('transportPayments', JSON.stringify(payments));
+}
+
+function setTransportPayment(locationName, paymentMethod) {
+    const payments = getTransportPayments();
+    if (paymentMethod && paymentMethod.trim()) {
+        payments[locationName] = paymentMethod.trim();
+    } else {
+        delete payments[locationName];
+    }
+    saveTransportPayments(payments);
+}
+
+function addTransportPaymentEntry() {
+    const locationInput = document.getElementById('transport-location-input');
+    const paymentInput = document.getElementById('transport-payment-input');
+
+    if (!locationInput || !paymentInput) return;
+
+    const location = locationInput.value.trim();
+    const payment = paymentInput.value.trim();
+
+    if (!location || !payment) {
+        showMessage('Please enter both location and payment method', 'warning');
+        return;
+    }
+
+    setTransportPayment(location, payment);
+
+    locationInput.value = '';
+    paymentInput.value = '';
+
+    renderTransportPaymentsList();
+    showMessage('Transport payment method added', 'success');
+
+    // Re-render location cards to show the new transport method
+    renderLocations();
+}
+
+function removeTransportPayment(locationName) {
+    const payments = getTransportPayments();
+    delete payments[locationName];
+    saveTransportPayments(payments);
+    renderTransportPaymentsList();
+    showMessage('Transport payment method removed', 'success');
+
+    // Re-render location cards to update the display
+    renderLocations();
+}
+
+function renderTransportPaymentsList() {
+    const listDiv = document.getElementById('transport-payments-list');
+    if (!listDiv) return;
+
+    const payments = getTransportPayments();
+    const locations = Object.keys(payments);
+
+    if (locations.length === 0) {
+        listDiv.innerHTML = '<p style="color: var(--text-secondary); font-style: italic;">No transport payment methods added yet</p>';
+        return;
+    }
+
+    listDiv.innerHTML = locations.map(location => `
+        <div style="padding: 1rem; margin-bottom: 0.75rem; background: var(--sidebar-bg); border-radius: 8px; border: 1px solid var(--border-color);">
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+                <div style="flex: 1;">
+                    <div style="color: var(--accent-color); font-weight: 600; margin-bottom: 0.25rem;">${location}</div>
+                    <div style="color: var(--text-primary); font-size: 1.05rem;">🚇 ${payments[location]}</div>
+                </div>
+                <button onclick="removeTransportPayment('${location.replace(/'/g, "\\'")}')"
+                    style="padding: 0.5rem 1rem; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 4px; cursor: pointer; font-size: 0.85rem;">
+                    Remove
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
 // Medication functions - Search only
 function searchMedicationRequirements() {
     const input = document.getElementById('medication-search-input');
@@ -2058,6 +2381,9 @@ function renderBudgetPeriodsList() {
             dateDisplay = 'General Budget (No specific dates)';
         }
 
+        const periodType = period.periodType || 'yearly';
+        const periodLabel = periodType === 'weekly' ? '/wk' : periodType === 'monthly' ? '/mo' : '/yr';
+
         return `
         <div style="padding: 1rem; margin-bottom: 0.75rem; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -2066,7 +2392,7 @@ function renderBudgetPeriodsList() {
                         ${dateDisplay}
                     </div>
                     <div style="color: var(--text-secondary); font-size: 0.9rem;">
-                        Annual Budget: ${period.currency || 'AUD'}$${formatWithCommas(period.amount)}
+                        Budget: ${period.currency || 'AUD'}$${formatWithCommas(period.amount)}${periodLabel}
                     </div>
                 </div>
                 <button onclick="removeBudgetPeriod(${index})" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 0.5rem 0.75rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
@@ -2082,13 +2408,15 @@ function addBudgetPeriod() {
     const startDateInput = document.getElementById('budget-start-date');
     const endDateInput = document.getElementById('budget-end-date');
     const amountInput = document.getElementById('budget-amount-input');
+    const periodTypeSelect = document.getElementById('budget-period-type');
     const currencySelect = document.getElementById('main-currency-select');
 
-    if (!startDateInput || !endDateInput || !amountInput) return;
+    if (!startDateInput || !endDateInput || !amountInput || !periodTypeSelect) return;
 
     const startDate = startDateInput.value || null;
     const endDate = endDateInput.value || null;
     const amount = parseFloat(amountInput.value);
+    const periodType = periodTypeSelect.value;
 
     if (!amount || amount <= 0) {
         alert('Please enter a valid budget amount');
@@ -2113,6 +2441,7 @@ function addBudgetPeriod() {
         startDate,
         endDate,
         amount,
+        periodType,
         currency: currencySelect ? currencySelect.value : 'AUD'
     });
 
@@ -2141,6 +2470,123 @@ function removeBudgetPeriod(index) {
         saveBudgetPeriods(periods);
         renderBudgetPeriodsList();
     }
+}
+
+// ===== TRANSPORT BUDGET PERIODS =====
+
+function getTransportBudgetPeriods() {
+    const periodsStr = localStorage.getItem('transportBudgetPeriods');
+    return periodsStr ? JSON.parse(periodsStr) : [];
+}
+
+function saveTransportBudgetPeriods(periods) {
+    localStorage.setItem('transportBudgetPeriods', JSON.stringify(periods));
+}
+
+function addTransportBudget() {
+    const startDateInput = document.getElementById('transport-budget-start-date');
+    const endDateInput = document.getElementById('transport-budget-end-date');
+    const amountInput = document.getElementById('transport-budget-amount');
+    const periodSelect = document.getElementById('transport-budget-period');
+    const currencySelect = document.getElementById('main-currency-select');
+
+    if (!startDateInput || !endDateInput || !amountInput || !periodSelect) return;
+
+    const startDate = startDateInput.value || null;
+    const endDate = endDateInput.value || null;
+    const amount = parseFloat(amountInput.value);
+    const periodType = periodSelect.value;
+
+    if (!amount || amount <= 0) {
+        alert('Please enter a valid budget amount');
+        return;
+    }
+
+    if (startDate && endDate && new Date(startDate) >= new Date(endDate)) {
+        alert('End date must be after start date');
+        return;
+    }
+
+    const periods = getTransportBudgetPeriods();
+    periods.push({
+        startDate,
+        endDate,
+        amount,
+        periodType,
+        currency: currencySelect ? currencySelect.value : 'AUD'
+    });
+
+    periods.sort((a, b) => {
+        if (!a.startDate && !b.startDate) return 0;
+        if (!a.startDate) return 1;
+        if (!b.startDate) return -1;
+        return new Date(a.startDate) - new Date(b.startDate);
+    });
+
+    saveTransportBudgetPeriods(periods);
+
+    startDateInput.value = '';
+    endDateInput.value = '';
+    amountInput.value = '';
+
+    renderTransportBudgetPeriodsList();
+    showMessage('Transport budget added', 'success');
+}
+
+function removeTransportBudgetPeriod(index) {
+    const periods = getTransportBudgetPeriods();
+    if (index >= 0 && index < periods.length) {
+        periods.splice(index, 1);
+        saveTransportBudgetPeriods(periods);
+        renderTransportBudgetPeriodsList();
+        showMessage('Transport budget removed', 'success');
+    }
+}
+
+function renderTransportBudgetPeriodsList() {
+    const listDiv = document.getElementById('transport-budget-periods-list');
+    if (!listDiv) return;
+
+    const periods = getTransportBudgetPeriods();
+
+    if (periods.length === 0) {
+        listDiv.innerHTML = '';
+        return;
+    }
+
+    listDiv.innerHTML = periods.map((period, index) => {
+        let dateDisplay;
+        if (period.startDate && period.endDate) {
+            dateDisplay = `${new Date(period.startDate).toLocaleDateString()} - ${new Date(period.endDate).toLocaleDateString()}`;
+        } else if (period.startDate) {
+            dateDisplay = `From ${new Date(period.startDate).toLocaleDateString()}`;
+        } else if (period.endDate) {
+            dateDisplay = `Until ${new Date(period.endDate).toLocaleDateString()}`;
+        } else {
+            dateDisplay = 'General Transport Budget';
+        }
+
+        const periodType = period.periodType || 'yearly';
+        const periodLabel = periodType === 'weekly' ? '/wk' : periodType === 'monthly' ? '/mo' : '/yr';
+
+        return `
+        <div style="padding: 1rem; margin-bottom: 0.75rem; background: rgba(251, 146, 60, 0.05); border: 1px solid rgba(251, 146, 60, 0.3); border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.25rem;">
+                        ${dateDisplay}
+                    </div>
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                        Transport Budget: ${period.currency || 'AUD'}$${formatWithCommas(period.amount)}${periodLabel}
+                    </div>
+                </div>
+                <button onclick="removeTransportBudgetPeriod(${index})" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 0.5rem 0.75rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
+                    Remove
+                </button>
+            </div>
+        </div>
+        `;
+    }).join('');
 }
 
 function getCurrentBudgetPeriod(date = new Date()) {
@@ -2180,6 +2626,7 @@ function loadFinances() {
     }
 
     renderBudgetPeriodsList();
+    renderTransportBudgetPeriodsList();
 }
 
 function updateTransportBudgetLabel(period) {
@@ -2464,7 +2911,18 @@ function getPackingFolders() {
     const foldersJSON = localStorage.getItem('packingFolders');
     if (!foldersJSON) return [];
     try {
-        return JSON.parse(foldersJSON);
+        const folders = JSON.parse(foldersJSON);
+        // Migrate old string-based folders to new object structure
+        if (folders.length > 0 && typeof folders[0] === 'string') {
+            const migratedFolders = folders.map(name => ({
+                name: name,
+                weight: null,
+                unit: 'kg'
+            }));
+            savePackingFolders(migratedFolders);
+            return migratedFolders;
+        }
+        return folders;
     } catch (e) {
         console.error('Error parsing packing folders:', e);
         return [];
@@ -2483,9 +2941,9 @@ function renderPackingFolderSelect() {
     const currentValue = select.value;
 
     select.innerHTML = '<option value="">No Bag</option>' +
-        folders.map(folder => `<option value="${folder}">${folder}</option>`).join('');
+        folders.map(folder => `<option value="${folder.name}">${folder.name}</option>`).join('');
 
-    if (currentValue && folders.includes(currentValue)) {
+    if (currentValue && folders.find(f => f.name === currentValue)) {
         select.value = currentValue;
     }
 }
@@ -2498,12 +2956,17 @@ function addPackingFolder() {
     if (!folderName) return;
 
     const folders = getPackingFolders();
-    if (folders.includes(folderName)) {
+    if (folders.find(f => f.name === folderName)) {
         alert('This bag already exists!');
         return;
     }
 
-    folders.push(folderName);
+    const unitSystem = localStorage.getItem('unitSystem') || 'metric';
+    folders.push({
+        name: folderName,
+        weight: null,
+        unit: unitSystem === 'metric' ? 'kg' : 'lbs'
+    });
     savePackingFolders(folders);
 
     input.value = '';
@@ -2515,7 +2978,7 @@ function removePackingFolder(folderName) {
     if (!confirm(`Remove bag "${folderName}"? Items in this bag will be moved to "No Bag".`)) return;
 
     const folders = getPackingFolders();
-    const updatedFolders = folders.filter(f => f !== folderName);
+    const updatedFolders = folders.filter(f => f.name !== folderName);
     savePackingFolders(updatedFolders);
 
     const items = getPackingItems();
@@ -2528,6 +2991,47 @@ function removePackingFolder(folderName) {
 
     renderPackingFolderSelect();
     renderPackingList();
+}
+
+function updateBagWeight(folderName) {
+    const weightInput = document.getElementById(`bag-weight-${folderName.replace(/\s+/g, '-')}`);
+    const unitSelect = document.getElementById(`bag-unit-${folderName.replace(/\s+/g, '-')}`);
+
+    if (!weightInput || !unitSelect) return;
+
+    const weight = weightInput.value ? parseFloat(weightInput.value) : null;
+    const unit = unitSelect.value;
+
+    const folders = getPackingFolders();
+    const folder = folders.find(f => f.name === folderName);
+
+    if (folder) {
+        folder.weight = weight;
+        folder.unit = unit;
+        savePackingFolders(folders);
+        showMessage('Bag weight updated', 'success');
+    }
+}
+
+function renderPackingItemCard(item, index) {
+    const favoriteIcon = item.favorite ? '⭐' : '☆';
+    const toBuyBadge = item.toBuy ? '<span style="background: rgba(251, 146, 60, 0.2); color: #fb923c; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; margin-left: 0.5rem;">TO BUY</span>' : '';
+
+    return `
+        <div style="display: flex; align-items: center; gap: 0.5rem; padding: 1rem; margin-bottom: 0.5rem; margin-left: 1rem; background: ${item.packed ? 'rgba(34, 197, 94, 0.1)' : 'var(--card-bg)'}; border: 1px solid ${item.packed ? 'rgba(34, 197, 94, 0.3)' : 'var(--border-color)'}; border-radius: 8px;">
+            <input type="checkbox" ${item.packed ? 'checked' : ''} onchange="togglePackingItem(${index})" style="width: 20px; height: 20px; cursor: pointer;" />
+            <span style="flex: 1; color: var(--text-primary); ${item.packed ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${item.text}${toBuyBadge}</span>
+            <button onclick="togglePackingFavorite(${index})" title="${item.favorite ? 'Remove from favorites' : 'Add to favorites'}" style="background: none; border: none; cursor: pointer; font-size: 1.2rem; padding: 0.25rem; line-height: 1;">
+                ${favoriteIcon}
+            </button>
+            <button onclick="togglePackingToBuy(${index})" title="${item.toBuy ? 'Remove from to-buy list' : 'Add to to-buy list'}" style="background: ${item.toBuy ? 'rgba(251, 146, 60, 0.2)' : 'rgba(100, 116, 139, 0.1)'}; border: 1px solid ${item.toBuy ? 'rgba(251, 146, 60, 0.3)' : 'rgba(100, 116, 139, 0.3)'}; color: ${item.toBuy ? '#fb923c' : 'var(--text-secondary)'}; padding: 0.4rem 0.6rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem;">
+                ${item.toBuy ? '✓ BUY' : 'BUY'}
+            </button>
+            <button onclick="removePackingItem(${index})" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 0.5rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
+                Remove
+            </button>
+        </div>
+    `;
 }
 
 function renderPackingList() {
@@ -2544,13 +3048,15 @@ function renderPackingList() {
 
     const packedCount = items.filter(item => item.packed).length;
     const totalCount = items.length;
+    const favoriteItems = items.filter(item => item.favorite);
+    const toBuyItems = items.filter(item => item.toBuy);
 
     // Group items by folder
     const itemsByFolder = {};
     itemsByFolder[''] = []; // No Bag group
 
     folders.forEach(folder => {
-        itemsByFolder[folder] = [];
+        itemsByFolder[folder.name] = [];
     });
 
     items.forEach((item, index) => {
@@ -2572,29 +3078,70 @@ function renderPackingList() {
         </div>
     `;
 
+    // Favorite items section
+    if (favoriteItems.length > 0) {
+        html += `
+            <div style="margin-bottom: 1.5rem;">
+                <div style="padding: 0.75rem; background: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 8px; margin-bottom: 0.75rem;">
+                    <h3 style="margin: 0; color: var(--text-primary); font-size: 1.1rem;">⭐ Favorites <span style="font-size: 0.9rem; color: var(--text-secondary); font-weight: 400;">(${favoriteItems.length})</span></h3>
+                </div>
+                ${favoriteItems.map((item, idx) => {
+                    const originalIndex = items.findIndex(i => i === item);
+                    return renderPackingItemCard(item, originalIndex);
+                }).join('')}
+            </div>
+        `;
+    }
+
+    // To-buy items section
+    if (toBuyItems.length > 0) {
+        html += `
+            <div style="margin-bottom: 1.5rem;">
+                <div style="padding: 0.75rem; background: rgba(251, 146, 60, 0.1); border: 1px solid rgba(251, 146, 60, 0.3); border-radius: 8px; margin-bottom: 0.75rem;">
+                    <h3 style="margin: 0; color: var(--text-primary); font-size: 1.1rem;">🛒 To Buy <span style="font-size: 0.9rem; color: var(--text-secondary); font-weight: 400;">(${toBuyItems.length})</span></h3>
+                </div>
+                ${toBuyItems.map((item, idx) => {
+                    const originalIndex = items.findIndex(i => i === item);
+                    return renderPackingItemCard(item, originalIndex);
+                }).join('')}
+            </div>
+        `;
+    }
+
     // Render folders
     folders.forEach(folder => {
-        if (itemsByFolder[folder] && itemsByFolder[folder].length > 0) {
-            const folderPackedCount = itemsByFolder[folder].filter(item => item.packed).length;
-            const folderTotalCount = itemsByFolder[folder].length;
+        const folderName = folder.name;
+        const safeId = folderName.replace(/\s+/g, '-');
+
+        if (itemsByFolder[folderName] && itemsByFolder[folderName].length > 0) {
+            const folderPackedCount = itemsByFolder[folderName].filter(item => item.packed).length;
+            const folderTotalCount = itemsByFolder[folderName].length;
+            const weightDisplay = folder.weight ? `${folder.weight} ${folder.unit}` : 'Not set';
 
             html += `
                 <div style="margin-bottom: 1.5rem;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; padding: 0.75rem; background: rgba(147, 51, 234, 0.1); border: 1px solid rgba(147, 51, 234, 0.3); border-radius: 8px;">
-                        <h3 style="margin: 0; color: var(--text-primary); font-size: 1.1rem;">🎒 ${folder} <span style="font-size: 0.9rem; color: var(--text-secondary); font-weight: 400;">(${folderPackedCount}/${folderTotalCount})</span></h3>
-                        <button onclick="removePackingFolder('${folder}')" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">
-                            Remove Bag
-                        </button>
-                    </div>
-                    ${itemsByFolder[folder].map(item => `
-                        <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; margin-bottom: 0.5rem; margin-left: 1rem; background: ${item.packed ? 'rgba(34, 197, 94, 0.1)' : 'var(--card-bg)'}; border: 1px solid ${item.packed ? 'rgba(34, 197, 94, 0.3)' : 'var(--border-color)'}; border-radius: 8px;">
-                            <input type="checkbox" ${item.packed ? 'checked' : ''} onchange="togglePackingItem(${item.originalIndex})" style="width: 20px; height: 20px; cursor: pointer;" />
-                            <span style="flex: 1; color: var(--text-primary); ${item.packed ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${item.text}</span>
-                            <button onclick="removePackingItem(${item.originalIndex})" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 0.5rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
-                                Remove
+                    <div style="padding: 0.75rem; background: rgba(147, 51, 234, 0.1); border: 1px solid rgba(147, 51, 234, 0.3); border-radius: 8px; margin-bottom: 0.75rem;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <h3 style="margin: 0; color: var(--text-primary); font-size: 1.1rem;">🎒 ${folderName} <span style="font-size: 0.9rem; color: var(--text-secondary); font-weight: 400;">(${folderPackedCount}/${folderTotalCount})</span></h3>
+                            <button onclick="removePackingFolder('${folderName}')" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">
+                                Remove Bag
                             </button>
                         </div>
-                    `).join('')}
+                        <div style="display: flex; gap: 0.5rem; align-items: center; margin-top: 0.75rem;">
+                            <span style="color: var(--text-secondary); font-size: 0.9rem; min-width: 100px;">Weight: ${weightDisplay}</span>
+                            <input type="number" id="bag-weight-${safeId}" placeholder="Weight" value="${folder.weight || ''}" min="0" step="0.1"
+                                style="width: 100px; padding: 0.4rem; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); font-size: 0.85rem;" />
+                            <select id="bag-unit-${safeId}"
+                                style="padding: 0.4rem; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); font-size: 0.85rem;">
+                                <option value="kg" ${folder.unit === 'kg' ? 'selected' : ''}>kg</option>
+                                <option value="lbs" ${folder.unit === 'lbs' ? 'selected' : ''}>lbs</option>
+                            </select>
+                            <button onclick="updateBagWeight('${folderName}')" class="location-link-btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; white-space: nowrap;">
+                                Update
+                            </button>
+                        </div>
+                    </div>
+                    ${itemsByFolder[folderName].map(item => renderPackingItemCard(item, item.originalIndex)).join('')}
                 </div>
             `;
         }
@@ -2610,15 +3157,7 @@ function renderPackingList() {
                 <div style="margin-bottom: 0.75rem; padding: 0.75rem; background: rgba(100, 116, 139, 0.1); border: 1px solid rgba(100, 116, 139, 0.3); border-radius: 8px;">
                     <h3 style="margin: 0; color: var(--text-primary); font-size: 1.1rem;">📦 No Bag <span style="font-size: 0.9rem; color: var(--text-secondary); font-weight: 400;">(${noBagPackedCount}/${noBagTotalCount})</span></h3>
                 </div>
-                ${itemsByFolder[''].map(item => `
-                    <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; margin-bottom: 0.5rem; margin-left: 1rem; background: ${item.packed ? 'rgba(34, 197, 94, 0.1)' : 'var(--card-bg)'}; border: 1px solid ${item.packed ? 'rgba(34, 197, 94, 0.3)' : 'var(--border-color)'}; border-radius: 8px;">
-                        <input type="checkbox" ${item.packed ? 'checked' : ''} onchange="togglePackingItem(${item.originalIndex})" style="width: 20px; height: 20px; cursor: pointer;" />
-                        <span style="flex: 1; color: var(--text-primary); ${item.packed ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${item.text}</span>
-                        <button onclick="removePackingItem(${item.originalIndex})" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 0.5rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
-                            Remove
-                        </button>
-                    </div>
-                `).join('')}
+                ${itemsByFolder[''].map(item => renderPackingItemCard(item, item.originalIndex)).join('')}
             </div>
         `;
     }
@@ -2637,11 +3176,36 @@ function addPackingItem() {
     const folder = folderSelect ? folderSelect.value : '';
 
     const items = getPackingItems();
-    items.push({ text, packed: false, folder, createdAt: new Date().toISOString() });
+    items.push({
+        text,
+        packed: false,
+        folder,
+        favorite: false,
+        toBuy: false,
+        createdAt: new Date().toISOString()
+    });
     savePackingItems(items);
 
     input.value = '';
     renderPackingList();
+}
+
+function togglePackingFavorite(index) {
+    const items = getPackingItems();
+    if (index >= 0 && index < items.length) {
+        items[index].favorite = !items[index].favorite;
+        savePackingItems(items);
+        renderPackingList();
+    }
+}
+
+function togglePackingToBuy(index) {
+    const items = getPackingItems();
+    if (index >= 0 && index < items.length) {
+        items[index].toBuy = !items[index].toBuy;
+        savePackingItems(items);
+        renderPackingList();
+    }
 }
 
 function togglePackingItem(index) {

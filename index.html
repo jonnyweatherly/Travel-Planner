@@ -25,6 +25,9 @@
             <li data-view="timeline" onclick="switchView('timeline')">
                 <span class="icon">📅</span> Timeline
             </li>
+            <li data-view="events" onclick="switchView('events')">
+                <span class="icon">🎉</span> Events
+            </li>
             <li data-view="reports" onclick="switchView('reports')">
                 <span class="icon">📊</span> Reports
             </li>
@@ -39,6 +42,15 @@
             </li>
             <li data-view="finances" onclick="switchView('finances')">
                 <span class="icon">💰</span> Finances
+            </li>
+            <li data-view="insurance" onclick="switchView('insurance')">
+                <span class="icon">🛡️</span> Insurance
+            </li>
+            <li data-view="shop" onclick="switchView('shop')">
+                <span class="icon">🛒</span> Shop
+            </li>
+            <li data-view="logistics" onclick="switchView('logistics')">
+                <span class="icon">✈️</span> Logistics
             </li>
             <li data-view="config" onclick="switchView('config')">
                 <span class="icon">⚙️</span> Configuration
@@ -346,6 +358,71 @@
                 </div>
             </div>
 
+            <div id="view-events" class="view-section">
+                <div class="fixed-controls">
+                    <div class="controls-row">
+                        <div style="flex: 1;">
+                            <h2 style="margin: 0; color: var(--text-primary);">Manage Events</h2>
+                            <p style="margin: 0.5rem 0 0 0; color: var(--text-secondary); font-size: 0.9rem;">
+                                Add personal events that will appear in the Explore page when you select a month
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="scrollable-content">
+                    <div style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+
+                        <!-- Add Event Form -->
+                        <div class="detail-section" style="margin-bottom: 2rem;">
+                            <h3 style="margin-top: 0; color: var(--text-primary);">Add New Event</h3>
+                            <div style="display: grid; gap: 1rem;">
+                                <div>
+                                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                                        Month
+                                    </label>
+                                    <select id="new-event-month"
+                                        style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);">
+                                        <option value="Jan">January</option>
+                                        <option value="Feb">February</option>
+                                        <option value="Mar">March</option>
+                                        <option value="Apr">April</option>
+                                        <option value="May">May</option>
+                                        <option value="Jun">June</option>
+                                        <option value="Jul">July</option>
+                                        <option value="Aug">August</option>
+                                        <option value="Sep">September</option>
+                                        <option value="Oct">October</option>
+                                        <option value="Nov">November</option>
+                                        <option value="Dec">December</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                                        Event Name
+                                    </label>
+                                    <input type="text" id="new-event-name"
+                                        placeholder="e.g., Conference, Birthday, Festival"
+                                        onkeypress="if(event.key==='Enter') addUserEvent()"
+                                        style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                </div>
+                                <button onclick="addUserEvent()" class="location-link-btn" style="width: 100%;">
+                                    Add Event
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Events List by Month -->
+                        <div class="detail-section">
+                            <h3 style="margin-top: 0; color: var(--text-primary);">Your Events</h3>
+                            <div id="user-events-list">
+                                <!-- Events injected here by JavaScript -->
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
             <div id="view-reports" class="view-section">
                 <div class="fixed-controls">
                     <div class="controls-row">
@@ -546,7 +623,7 @@
                                 <h3 style="margin-top: 0; color: var(--text-primary); font-size: 0.95rem;">Add Budget
                                     Period</h3>
                                 <div
-                                    style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+                                    style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
                                     <div>
                                         <label style="font-size: 0.85rem; color: var(--text-secondary);">Start
                                             Date <span style="color: var(--text-muted);">(Optional)</span></label>
@@ -560,8 +637,17 @@
                                             style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
                                     </div>
                                     <div>
-                                        <label style="font-size: 0.85rem; color: var(--text-secondary);">Annual
-                                            Budget</label>
+                                        <label style="font-size: 0.85rem; color: var(--text-secondary);">Period</label>
+                                        <select id="budget-period-type"
+                                            style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);">
+                                            <option value="weekly">Per Week</option>
+                                            <option value="monthly">Per Month</option>
+                                            <option value="yearly" selected>Per Year</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 0.85rem; color: var(--text-secondary);">Budget
+                                            Amount</label>
                                         <input type="number" id="budget-amount-input" placeholder="e.g., 50000" min="0"
                                             step="1000"
                                             style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
@@ -578,24 +664,46 @@
 
                         <div class="detail-section" style="margin-top: 2rem;">
                             <h2>Transport Budget</h2>
-                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Set aside a separate budget
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Set aside separate budgets
                                 for flights, trains, and other transportation costs.</p>
-                            <div class="filter-group">
-                                <label>Budget Period</label>
-                                <select id="transport-budget-period"
-                                    style="padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); margin-bottom: 1rem;">
-                                    <option value="weekly">Per Week</option>
-                                    <option value="monthly">Per Month</option>
-                                    <option value="yearly" selected>Per Year</option>
-                                </select>
-                            </div>
-                            <div class="filter-group">
-                                <label id="transport-budget-label">Annual Transport Budget</label>
-                                <input type="number" id="travel-budget-input" placeholder="e.g., 15000" min="0"
-                                    step="1000"
-                                    style="padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
-                                <div class="filter-hint">Budget for flights, trains, and transportation (separate from
-                                    living costs)</div>
+
+                            <div id="transport-budget-periods-list" style="margin-bottom: 1.5rem;"></div>
+
+                            <div
+                                style="padding: 1rem; background: rgba(251, 146, 60, 0.1); border: 1px solid rgba(251, 146, 60, 0.3); border-radius: 6px;">
+                                <h3 style="margin-top: 0; color: var(--text-primary); font-size: 0.95rem;">Add Transport Budget</h3>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+                                    <div>
+                                        <label style="font-size: 0.85rem; color: var(--text-secondary);">Start Date <span style="color: var(--text-muted);">(Optional)</span></label>
+                                        <input type="date" id="transport-budget-start-date"
+                                            style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 0.85rem; color: var(--text-secondary);">End Date <span style="color: var(--text-muted);">(Optional)</span></label>
+                                        <input type="date" id="transport-budget-end-date"
+                                            style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 0.85rem; color: var(--text-secondary);">Period</label>
+                                        <select id="transport-budget-period"
+                                            style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);">
+                                            <option value="weekly">Per Week</option>
+                                            <option value="monthly">Per Month</option>
+                                            <option value="yearly" selected>Per Year</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 0.85rem; color: var(--text-secondary);">Budget Amount</label>
+                                        <input type="number" id="transport-budget-amount" placeholder="e.g., 15000" min="0"
+                                            step="1000"
+                                            style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                    </div>
+                                </div>
+                                <div class="filter-hint" style="margin-bottom: 0.75rem;">Leave dates blank for a general transport budget</div>
+                                <button class="location-link-btn" onclick="addTransportBudget()"
+                                    style="width: 100%; background: rgba(251, 146, 60, 0.1); border: 1px solid rgba(251, 146, 60, 0.3); color: #fb923c;">
+                                    Add Transport Budget
+                                </button>
                             </div>
                         </div>
 
@@ -774,6 +882,99 @@
                                 </div>
                             </div>
 
+                            <!-- Phone Number Management -->
+                            <div class="detail-section" style="margin-top: 2rem;">
+                                <h2>Phone Numbers</h2>
+                                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Manage your phone numbers
+                                    and SIM cards for different countries</p>
+
+                                <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px;">
+                                    <h3 style="margin-top: 0; color: var(--text-primary); font-size: 0.95rem;">Add Phone
+                                        Number</h3>
+                                    <div style="display: grid; gap: 1rem;">
+                                        <div>
+                                            <label
+                                                style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                                                Country
+                                            </label>
+                                            <input type="text" id="new-phone-country"
+                                                placeholder="e.g., Australia, Japan, USA"
+                                                style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                        </div>
+                                        <div>
+                                            <label
+                                                style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                                                Phone Number
+                                            </label>
+                                            <input type="tel" id="new-phone-number" placeholder="e.g., +61 400 000 000"
+                                                style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                        </div>
+                                        <div>
+                                            <label
+                                                style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                                                PIN (Optional)
+                                            </label>
+                                            <input type="text" id="new-phone-pin" placeholder="e.g., 1234" maxlength="8"
+                                                style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                        </div>
+                                        <div>
+                                            <label
+                                                style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                                                Expiry Date (Optional)
+                                            </label>
+                                            <input type="date" id="new-phone-expiry"
+                                                style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                        </div>
+                                        <button onclick="addPhoneNumber()" class="location-link-btn" style="width: 100%;">
+                                            Add Phone Number
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div id="phone-numbers-list" style="margin-top: 1.5rem;">
+                                    <!-- Phone numbers injected here -->
+                                </div>
+                            </div>
+
+                            <div class="detail-section" style="margin-top: 2rem;">
+                                <h2>Transport Payment Methods</h2>
+                                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Add public transport
+                                    payment methods for locations (e.g., Opal card, Pasmo, Paywave, etc.)</p>
+
+                                <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 8px;">
+                                    <h3 style="margin-top: 0; color: var(--text-primary); font-size: 0.95rem;">Add
+                                        Payment Method</h3>
+                                    <div style="display: grid; gap: 1rem;">
+                                        <div>
+                                            <label
+                                                style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                                                Location
+                                            </label>
+                                            <input type="text" id="transport-location-input"
+                                                placeholder="e.g., Sydney, Tokyo, London"
+                                                style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                        </div>
+                                        <div>
+                                            <label
+                                                style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                                                Payment Method
+                                            </label>
+                                            <input type="text" id="transport-payment-input"
+                                                placeholder="e.g., Opal card, Pasmo, Contactless payment"
+                                                style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);" />
+                                        </div>
+                                        <button onclick="addTransportPaymentEntry()" class="location-link-btn"
+                                            style="width: 100%;">
+                                            Add Transport Method
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div id="transport-payments-list" style="margin-top: 1.5rem;">
+                                    <!-- Transport payments injected here -->
+                                </div>
+                            </div>
+
                             <div class="detail-section" style="margin-top: 2rem;">
                                 <h2>Medication Regulations</h2>
                                 <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Search for medication
@@ -805,12 +1006,148 @@
                         </div>
                     </div>
                 </div>
+
+            <!-- Insurance View -->
+            <div id="view-insurance" class="view-section">
+                <div class="fixed-controls">
+                    <div class="controls-row">
+                        <div style="flex: 1;">
+                            <h2 style="margin: 0; color: var(--text-primary);">Travel Insurance</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="scrollable-content">
+                    <div style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+                        <div class="detail-section">
+                            <h2>Recommended Insurance Provider</h2>
+                            <div style="padding: 1.5rem; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 2rem;">
+                                <h3 style="color: var(--accent-color); margin-top: 0;">SafetyWing - Nomad Insurance</h3>
+                                <p style="color: var(--text-secondary); line-height: 1.6;">
+                                    Designed specifically for digital nomads and long-term travelers. Coverage in 180+ countries with flexible monthly subscriptions.
+                                </p>
+                                <a href="https://safetywing.com/" target="_blank" rel="noopener noreferrer" class="location-link-btn" style="display: inline-block; text-decoration: none;">
+                                    Visit SafetyWing →
+                                </a>
+                            </div>
+
+                            <h2>Insurance Requirements by Location</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                                Some countries require proof of travel insurance for entry. Check requirements for your destinations based on your passport.
+                            </p>
+                            <div style="padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px;">
+                                <p style="color: var(--text-secondary); margin: 0;">
+                                    💡 <strong>Coming Soon:</strong> Automatic insurance requirement checks based on your saved passports and planned destinations.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shop View -->
+            <div id="view-shop" class="view-section">
+                <div class="fixed-controls">
+                    <div class="controls-row">
+                        <div style="flex: 1;">
+                            <h2 style="margin: 0; color: var(--text-primary);">Travel Shop</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="scrollable-content">
+                    <div style="max-width: 900px; margin: 0 auto; padding: 2rem;">
+                        <div class="detail-section">
+                            <h2>Essential Travel Products</h2>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                                <!-- eSIM Cards -->
+                                <div style="padding: 1.5rem; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px;">
+                                    <h3 style="color: var(--accent-color); margin-top: 0;">📱 eSIM Cards</h3>
+                                    <p style="color: var(--text-secondary);">Stay connected worldwide with affordable data plans.</p>
+                                    <a href="#" class="location-link-btn" style="display: inline-block; text-decoration: none; opacity: 0.6; pointer-events: none;">
+                                        Coming Soon
+                                    </a>
+                                </div>
+
+                                <!-- Travel Insurance -->
+                                <div style="padding: 1.5rem; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px;">
+                                    <h3 style="color: var(--accent-color); margin-top: 0;">🛡️ Travel Insurance</h3>
+                                    <p style="color: var(--text-secondary);">Comprehensive coverage for digital nomads.</p>
+                                    <a href="https://safetywing.com/" target="_blank" rel="noopener noreferrer" class="location-link-btn" style="display: inline-block; text-decoration: none;">
+                                        View Options →
+                                    </a>
+                                </div>
+
+                                <!-- Seasonal Clothing -->
+                                <div style="padding: 1.5rem; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px;">
+                                    <h3 style="color: var(--accent-color); margin-top: 0;">🧥 Seasonal Clothing</h3>
+                                    <p style="color: var(--text-secondary);">Puffer jackets, swimwear, and travel-friendly apparel.</p>
+                                    <a href="#" class="location-link-btn" style="display: inline-block; text-decoration: none; opacity: 0.6; pointer-events: none;">
+                                        Coming Soon
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logistics View -->
+            <div id="view-logistics" class="view-section">
+                <div class="fixed-controls">
+                    <div class="controls-row">
+                        <div style="flex: 1;">
+                            <h2 style="margin: 0; color: var(--text-primary);">Travel Logistics</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="scrollable-content">
+                    <div style="max-width: 900px; margin: 0 auto; padding: 2rem;">
+                        <div class="detail-section">
+                            <h2>Essential Travel Services</h2>
+                            <div style="display: grid; gap: 1.5rem;">
+                                <!-- VPN Services -->
+                                <div style="padding: 1.5rem; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px;">
+                                    <h3 style="color: var(--accent-color); margin-top: 0;">🔒 VPN Services</h3>
+                                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                                        Secure your internet connection and access geo-restricted content while traveling.
+                                    </p>
+                                    <a href="#" class="location-link-btn" style="display: inline-block; text-decoration: none; opacity: 0.6; pointer-events: none;">
+                                        Coming Soon
+                                    </a>
+                                </div>
+
+                                <!-- eSIM & Mobile Data -->
+                                <div style="padding: 1.5rem; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px;">
+                                    <h3 style="color: var(--accent-color); margin-top: 0;">📱 eSIM & Mobile Data</h3>
+                                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                                        Get connected instantly in any country with digital SIM cards.
+                                    </p>
+                                    <a href="#" class="location-link-btn" style="display: inline-block; text-decoration: none; opacity: 0.6; pointer-events: none;">
+                                        Coming Soon
+                                    </a>
+                                </div>
+
+                                <!-- Visa Services -->
+                                <div style="padding: 1.5rem; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px;">
+                                    <h3 style="color: var(--accent-color); margin-top: 0;">🛂 Visa Services</h3>
+                                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                                        Check visa requirements and application processes for your destinations.
+                                    </p>
+                                    <a href="#" class="location-link-btn" style="display: inline-block; text-decoration: none; opacity: 0.6; pointer-events: none;">
+                                        Coming Soon
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 
     <!-- Fuse.js for fuzzy search -->
     <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
-    <script src="app.js?v=32"></script>
+    <script src="app.js?v=41"></script>
 </body>
 
 </html>

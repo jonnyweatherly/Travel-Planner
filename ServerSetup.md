@@ -4,7 +4,10 @@
 
 ```bash
 cd "Travel-Planner" && python -m http.server 8000
+
 cd Travel-Planner && timeout 3 python -m http.server 8000 || echo "Command timed out or failed"
+
+cd "c:\Users\Jonny.Weatherly\Dev\Travel-Planner" && python -m http.server 8000
 ```
 
 ## Server Kill Local
